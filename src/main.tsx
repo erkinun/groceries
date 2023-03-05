@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 // TODO remove css and replace with tailwind
 import { Dashboard } from './pages/Dashboard';
 import ErrorPage from './pages/ErrorPage';
+import { Header } from './pages/Header';
 import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';
 
@@ -25,6 +26,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <>
+      <Header />
+      <RouterProvider router={router} />
+    </>
   </React.StrictMode>,
 );
