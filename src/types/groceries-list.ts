@@ -13,6 +13,7 @@ export type GroceryList = {
 };
 
 export type GroceryLists = {
+  id: string;
   name: string;
   lists: GroceryList[];
 };

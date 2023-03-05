@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ref, onValue, update, push, remove } from 'firebase/database';
+import { ref, onValue, update } from 'firebase/database';
 import { database } from '../firebase';
 
 // TODO maybe add it to do the users list
@@ -26,8 +26,8 @@ export function useProfile(uid: string) {
   const [profile, setProfile] = useState({} as Profile);
   useEffect(() => {
     if (uid) {
-      const routinesRef = ref(database, `users/${uid}/profile`);
-      onValue(routinesRef, (snapshot) => {
+      const profileRef = ref(database, `users/${uid}/profile`);
+      onValue(profileRef, (snapshot) => {
         const data = snapshot.val();
         if (snapshot.exists()) {
           setProfile(data);
