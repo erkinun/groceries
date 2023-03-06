@@ -6,12 +6,13 @@ type GroceryItem = {
 };
 
 export type GroceryList = {
-  id: string;
+  id?: string;
   date: string;
   name: string;
   items: GroceryItem[];
 };
 
+// TODO maybe rename them to collections
 export type GroceryLists = {
   id: string;
   name: string;

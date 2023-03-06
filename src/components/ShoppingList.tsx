@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { createShoppingList } from '../queries/shopping-list';
 
 function printHumanReadableDate(date: Date) {
   return date.toLocaleDateString();
 }
 
-export function ShoppingList() {
+type ShoppingListProps = { collectionId: string };
+
+export function ShoppingList({ collectionId }: ShoppingListProps) {
   // TODO use the shopping list type later on
   // TODO also might use the existing list to edit
   // TODO add checkboxes to the items
   // TODO clear bottom input when handleItem is called
   const [items, setItems] = useState<string[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleItem = (event: React.FocusEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -27,12 +31,36 @@ export function ShoppingList() {
     }
   };
 
+  console.log({ collectionId });
+
+  const handleSave = () => {
+    console.log('clicking save with', collectionId);
+    createShoppingList(collectionId, {
+      name: inputRef.current?.value ?? 'Empty list name',
+      date: printHumanReadableDate(new Date()),
+      items: items.map((item) => ({
+        name: item,
+        fetched: false,
+      })),
+    });
+  };
+
   // TODO remove the styling later on
   return (
     <div style={{ border: '1px solid black' }}>
       <h2>Shopping list</h2>
 
       <h3>{printHumanReadableDate(new Date())}</h3>
+
+      <div>
+        <label htmlFor="name">List name</label>
+        <input
+          ref={inputRef}
+          type="text"
+          id="name"
+          placeholder="Fill in a name to remember"
+        />
+      </div>
 
       <h4>Items</h4>
       <ul>
@@ -56,6 +84,10 @@ export function ShoppingList() {
           onKeyDown={handleKeyDown}
         />
       </ul>
+      <button onClick={handleSave}>Save</button>
+      {
+        // TODO this might be removed and all updates can be saved in near real time
+      }
     </div>
   );
 }

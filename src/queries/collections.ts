@@ -9,10 +9,8 @@ export function useCollections(uid: string) {
   useEffect(() => {
     if (uid) {
       // TODO is there a better way of doing this?
-      // TODO read the lists? maybe only read them when a collection is selected
       const collectionsRef = ref(database, `users/${uid}/collections`);
       onValue(collectionsRef, (snapshot) => {
-        const ids: string[] = [];
         const collections = [] as GroceryLists[];
         snapshot.forEach((child) => {
           const realRef = ref(database, `collections/${child.val()}`);
@@ -25,8 +23,6 @@ export function useCollections(uid: string) {
             });
             setCollections(collections);
           });
-          console.log(child.key, child.val());
-          ids.push(child.key ?? '');
         });
       });
     }
