@@ -53,3 +53,17 @@ export async function createShoppingList(
     console.error(error);
   }
 }
+
+// TODO check user has access to the list
+export async function updateShoppingList(
+  collectionId: string,
+  shoppingList: GroceryList,
+) {
+  try {
+    const newShoppingListKey = shoppingList.id ?? '';
+    const shoppingListsRef = ref(database, `lists/${newShoppingListKey}`);
+    await update(shoppingListsRef, shoppingList);
+  } catch (error) {
+    console.error(error);
+  }
+}

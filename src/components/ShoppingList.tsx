@@ -1,6 +1,9 @@
 import { setItem } from 'localforage';
 import { useEffect, useRef, useState } from 'react';
-import { createShoppingList } from '../queries/shopping-list';
+import {
+  createShoppingList,
+  updateShoppingList,
+} from '../queries/shopping-list';
 import { GroceryList } from '../types/groceries-list';
 
 function printHumanReadableDate(date: Date) {
@@ -41,14 +44,25 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   const handleSave = () => {
     console.log('clicking save with', collectionId);
     // TODO edit mode
-    createShoppingList(collectionId, {
-      name: inputRef.current?.value ?? 'Empty list name',
-      date: printHumanReadableDate(new Date()),
-      items: items.map((item) => ({
-        name: item,
-        fetched: false,
-      })),
-    });
+    if (editMode) {
+      updateShoppingList(collectionId, {
+        ...groceryList,
+        // TODO replace this with correct types items state
+        items: items.map((item) => ({
+          name: item,
+          fetched: false,
+        })),
+      });
+    } else {
+      createShoppingList(collectionId, {
+        name: inputRef.current?.value ?? 'Empty list name',
+        date: printHumanReadableDate(new Date()),
+        items: items.map((item) => ({
+          name: item,
+          fetched: false,
+        })),
+      });
+    }
   };
 
   // TODO remove the styling later on

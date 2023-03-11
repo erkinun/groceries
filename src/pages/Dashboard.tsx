@@ -56,6 +56,7 @@ export function Dashboard() {
           lists.map((list) => {
             return (
               <ShoppingList
+                key={list.id}
                 collectionId={selectedCollection}
                 groceryList={list}
               />
