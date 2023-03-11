@@ -1,19 +1,26 @@
-import { useRef, useState } from 'react';
+import { setItem } from 'localforage';
+import { useEffect, useRef, useState } from 'react';
 import { createShoppingList } from '../queries/shopping-list';
+import { GroceryList } from '../types/groceries-list';
 
 function printHumanReadableDate(date: Date) {
   return date.toLocaleDateString();
 }
 
-type ShoppingListProps = { collectionId: string };
+type ShoppingListProps = { collectionId: string; groceryList?: GroceryList };
 
-export function ShoppingList({ collectionId }: ShoppingListProps) {
+export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO use the shopping list type later on
   // TODO also might use the existing list to edit
   // TODO add checkboxes to the items
   // TODO clear bottom input when handleItem is called
   const [items, setItems] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const editMode = groceryList !== undefined;
+
+  useEffect(() => {
+    setItems(groceryList?.items.map((item) => item.name) ?? []);
+  }, [editMode]);
 
   const handleItem = (event: React.FocusEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -31,10 +38,9 @@ export function ShoppingList({ collectionId }: ShoppingListProps) {
     }
   };
 
-  console.log({ collectionId });
-
   const handleSave = () => {
     console.log('clicking save with', collectionId);
+    // TODO edit mode
     createShoppingList(collectionId, {
       name: inputRef.current?.value ?? 'Empty list name',
       date: printHumanReadableDate(new Date()),
@@ -48,9 +54,11 @@ export function ShoppingList({ collectionId }: ShoppingListProps) {
   // TODO remove the styling later on
   return (
     <div style={{ border: '1px solid black' }}>
-      <h2>Shopping list</h2>
+      <h2>{editMode ? groceryList.name : 'Shopping list'}</h2>
 
-      <h3>{printHumanReadableDate(new Date())}</h3>
+      <h3>
+        {editMode ? groceryList.date : printHumanReadableDate(new Date())}
+      </h3>
 
       <div>
         <label htmlFor="name">List name</label>
@@ -59,6 +67,7 @@ export function ShoppingList({ collectionId }: ShoppingListProps) {
           type="text"
           id="name"
           placeholder="Fill in a name to remember"
+          defaultValue={groceryList?.name}
         />
       </div>
 

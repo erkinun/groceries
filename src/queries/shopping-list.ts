@@ -6,9 +6,6 @@ import { database } from '../firebase';
 export function useShoppingLists(uid: string, collectionId: string) {
   const [shoppingLists, setShoppingLists] = useState([] as GroceryList[]);
 
-  console.log('useShoppingLists');
-  console.log({ uid, collectionId });
-
   useEffect(() => {
     if (uid && collectionId) {
       const shoppingListsRef = ref(
@@ -18,7 +15,6 @@ export function useShoppingLists(uid: string, collectionId: string) {
       onValue(shoppingListsRef, (snapshot) => {
         const lists = [] as GroceryList[];
         snapshot.forEach((child) => {
-          console.log({ child });
           const realRef = ref(database, `lists/${child.val()}`);
           onValue(realRef, (listSnap) => {
             const listData = listSnap.val() as GroceryList;

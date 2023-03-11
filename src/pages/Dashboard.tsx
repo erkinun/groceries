@@ -27,8 +27,6 @@ export function Dashboard() {
     createCollection(user?.uid ?? '', inputRef.current?.value ?? '');
   };
 
-  console.log({ lists });
-
   return (
     <div>
       <div>Hi {profile.userName ?? user?.displayName}!</div>
@@ -50,12 +48,19 @@ export function Dashboard() {
         <input ref={inputRef} type="text" />
         <button onClick={handleCreateButton}>Create</button>
 
-        <div>{lists.length} shopping lists in this collection</div>
-
         <ShoppingList collectionId={selectedCollection} />
 
+        <div>{lists.length} shopping lists in this collection</div>
         {
           // TODO show the older 20 shopping lists
+          lists.map((list) => {
+            return (
+              <ShoppingList
+                collectionId={selectedCollection}
+                groceryList={list}
+              />
+            );
+          })
         }
       </div>
     </div>

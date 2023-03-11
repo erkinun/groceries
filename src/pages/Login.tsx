@@ -8,7 +8,6 @@ export function Login() {
   const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
   useEffect(() => {
-    console.log({ user, loading });
     if (loading) {
       // TODO maybe trigger a loading screen
       return;
