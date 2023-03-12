@@ -12,6 +12,9 @@ export function Header() {
         <li>
           <a href="/profile">Profile</a>
         </li>
+        <li>
+          <a href="/share">Share</a>
+        </li>
       </ul>
     </nav>
   );

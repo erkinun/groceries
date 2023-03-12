@@ -7,6 +7,7 @@ import ErrorPage from './pages/ErrorPage';
 import { Header } from './pages/Header';
 import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';
+import { Share } from './pages/Share';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <Profile />,
+  },
+  {
+    path: '/share',
+    element: <Share />,
   },
 ]);
 

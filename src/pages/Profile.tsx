@@ -5,7 +5,7 @@ import { auth } from '../firebase';
 import { updateUserName, useProfile } from '../queries/user';
 
 export function Profile() {
-  const [user, loading, error] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const profile = useProfile(user?.uid ?? '');
   const inputRef = useRef<HTMLInputElement>(null);
   const handleSave = () => {

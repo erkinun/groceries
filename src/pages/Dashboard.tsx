@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { CollectionList } from '../components/CollectionList';
 import { ShoppingList } from '../components/ShoppingList';
 
 import { auth } from '../firebase';
@@ -8,7 +9,7 @@ import { useShoppingLists } from '../queries/shopping-list';
 import { useProfile } from '../queries/user';
 
 export function Dashboard() {
-  const [user, loading, error] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const profile = useProfile(user?.uid ?? '');
   const collections = useCollections(user?.uid ?? '');
   const [selectedCollection, setSelectedCollection] = useState<string>(
@@ -33,16 +34,7 @@ export function Dashboard() {
       <div>
         <h2>Your collections</h2>
 
-        {
-          // TODO handle the selected collection
-        }
-        <select>
-          {collections.map((collection) => (
-            <option key={collection.name} value={collection.name}>
-              {collection.name}
-            </option>
-          ))}
-        </select>
+        <CollectionList collections={collections} />
 
         <h2>Create a new shopping collection</h2>
         <input ref={inputRef} type="text" />

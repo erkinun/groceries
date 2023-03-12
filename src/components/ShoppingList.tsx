@@ -1,4 +1,3 @@
-import { setItem } from 'localforage';
 import { useEffect, useRef, useState } from 'react';
 import {
   createShoppingList,

@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
-import { ref, onValue, child, push, update } from 'firebase/database';
-import { database } from '../firebase';
+import { ref, onValue, child, push, update, get } from 'firebase/database';
+import { auth, database } from '../firebase';
 import { GroceryLists } from '../types/groceries-list';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-export function useCollections(uid: string) {
+export function useCollections() {
+  const [user] = useAuthState(auth);
+
+  const uid = user?.uid;
   // TODO use the grocery list later on
   const [collections, setCollections] = useState([] as GroceryLists[]);
   useEffect(() => {
@@ -11,17 +15,19 @@ export function useCollections(uid: string) {
       // TODO is there a better way of doing this?
       const collectionsRef = ref(database, `users/${uid}/collections`);
       onValue(collectionsRef, (snapshot) => {
-        const collections = [] as GroceryLists[];
+        const newCollections = [] as GroceryLists[];
         snapshot.forEach((child) => {
           const realRef = ref(database, `collections/${child.val()}`);
           onValue(realRef, (collectionSnap) => {
             const collectionData = collectionSnap.val() as GroceryLists;
-            collections.push({
+            newCollections.push({
               name: collectionData.name,
               id: child.val(),
               lists: [],
             });
-            setCollections(collections);
+            setCollections(
+              Array.from(new Set([...collections, ...newCollections])),
+            );
           });
         });
       });
@@ -44,6 +50,31 @@ export async function createCollection(uid: string, name: string) {
     await update(collectionsRef, collectionData);
     const userCollectionsRef = ref(database, `users/${uid}/collections`);
     await push(userCollectionsRef, newCollectionKey);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// TODO maybe check user exists?
+// TODO maybe use the user type here?
+export function shareCollectionWithUser(
+  collectionId: string,
+  username: string,
+) {
+  try {
+    const usersRef = ref(database, `users`);
+    get(usersRef).then((snapshot) => {
+      snapshot.forEach((child) => {
+        const userData = child.val();
+        if (userData.profile.userName === username) {
+          const userCollectionsRef = ref(
+            database,
+            `users/${child.key}/collections`,
+          );
+          push(userCollectionsRef, collectionId);
+        }
+      });
+    });
   } catch (error) {
     console.error(error);
   }
