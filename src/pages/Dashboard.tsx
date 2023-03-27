@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { CollectionList } from '../components/CollectionList';
 import { ShoppingList } from '../components/ShoppingList';
+import StatusBar from '../components/StatusBar';
 
 import { auth } from '../firebase';
 import { useCollections, createCollection } from '../queries/collections';
@@ -10,8 +11,8 @@ import { useProfile } from '../queries/user';
 
 export function Dashboard() {
   const [user] = useAuthState(auth);
-  const profile = useProfile(user?.uid ?? '');
-  const collections = useCollections(user?.uid ?? '');
+  const profile = useProfile();
+  const collections = useCollections();
   const [selectedCollection, setSelectedCollection] = useState<string>(
     collections[0]?.id ?? '',
   );
@@ -30,6 +31,7 @@ export function Dashboard() {
 
   return (
     <div>
+      <StatusBar />
       <div>Hi {profile.userName ?? user?.displayName}!</div>
       <div>
         <h2>Your collections</h2>
