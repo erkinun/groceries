@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GroceryList } from '../types/groceries-list';
-import { ref, onValue, child, push, update } from 'firebase/database';
+import { ref, onValue, child, push, update, get } from 'firebase/database';
 import { database } from '../firebase';
 
 export function useShoppingLists(uid: string, collectionId: string) {
@@ -13,18 +13,20 @@ export function useShoppingLists(uid: string, collectionId: string) {
         `collections/${collectionId}/lists`,
       );
       onValue(shoppingListsRef, (snapshot) => {
-        const lists = [] as GroceryList[];
         snapshot.forEach((child) => {
           const realRef = ref(database, `lists/${child.val()}`);
           onValue(realRef, (listSnap) => {
             const listData = listSnap.val() as GroceryList;
-            lists.push({
-              name: listData.name,
-              id: child.val(),
-              date: listData.date,
-              items: listData.items,
-            });
-            setShoppingLists(lists);
+            setShoppingLists((existingLists) =>
+              existingLists.concat([
+                {
+                  name: listData.name,
+                  id: child.val(),
+                  date: listData.date,
+                  items: listData.items,
+                },
+              ]),
+            );
           });
         });
       });
