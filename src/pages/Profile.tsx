@@ -6,7 +6,7 @@ import { updateUserName, useProfile } from '../queries/user';
 
 export function Profile() {
   const [user] = useAuthState(auth);
-  const profile = useProfile(user?.uid ?? '');
+  const profile = useProfile();
   const inputRef = useRef<HTMLInputElement>(null);
   const handleSave = () => {
     updateUserName(user?.uid ?? '', inputRef.current?.value ?? '');

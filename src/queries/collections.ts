@@ -14,7 +14,7 @@ export function useCollections() {
     if (uid) {
       // TODO is there a better way of doing this?
       const collectionsRef = ref(database, `users/${uid}/collections`);
-      onValue(collectionsRef, (snapshot) => {
+      get(collectionsRef).then((snapshot) => {
         const newCollections = [] as GroceryLists[];
         snapshot.forEach((child) => {
           const realRef = ref(database, `collections/${child.val()}`);

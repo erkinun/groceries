@@ -33,7 +33,7 @@ export function Dashboard() {
     <div>
       <StatusBar />
       <div>Hi {profile.userName ?? user?.displayName}!</div>
-      <div>
+      <>
         <h2>Your collections</h2>
 
         <CollectionList collections={collections} />
@@ -57,7 +57,7 @@ export function Dashboard() {
             );
           })
         }
-      </div>
+      </>
     </div>
   );
 }
