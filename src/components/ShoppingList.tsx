@@ -64,9 +64,8 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
     }
   };
 
-  // TODO remove the styling later on
   return (
-    <div style={{ border: '1px solid black' }}>
+    <div className="p-4 border-solid border-black border  rounded-xl shadow-lg">
       <h2>{editMode ? groceryList.name : 'Shopping list'}</h2>
 
       <h3>
@@ -74,7 +73,9 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
       </h3>
 
       <div>
-        <label htmlFor="name">List name</label>
+        <label className="font-medium" htmlFor="name">
+          List name
+        </label>
         <input
           ref={inputRef}
           type="text"
