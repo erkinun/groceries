@@ -17,8 +17,8 @@ export function Login() {
 
   return (
     <div>
-      <h1>Hello Groceries</h1>
-      <button className="login__btn login__google" onClick={authFn}>
+      <h1 className="header">Hello Groceries</h1>
+      <button className="btn" onClick={authFn}>
         Login with Google
       </button>
     </div>

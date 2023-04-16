@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply bg-blue-500 text-white font-bold py-2 px-4 rounded;
+  }
+
+  .nav-link {
+    @apply text-blue-500 font-bold py-2 px-4 rounded flex items-center justify-center mt-2 hover:text-white hover:bg-blue-300 p-2 hover:rounded-xl transition-all duration-300 ease-linear;
+  }
+
+  .header {
+    @apply bg-gray-200 p-4 flex items-center justify-between;
+  }
+}
