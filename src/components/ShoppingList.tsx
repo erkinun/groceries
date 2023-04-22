@@ -15,6 +15,8 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO use the shopping list type later on
   // TODO also might use the existing list to edit
   // TODO clear bottom input when handleItem is called
+  // TODO add the ability to remove items
+  // TODO add checkboxes functionality and styling with strikethrough, replace string state with grocerylist state
   const [items, setItems] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const editMode = groceryList !== undefined;
@@ -64,7 +66,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   };
 
   return (
-    <div className="p-4 border-solid border-black border  rounded-xl shadow-lg">
+    <div className="bg-white p-4 rounded-xl shadow-lg">
       <h2 className="font-bold">
         {editMode ? groceryList.name : 'Shopping list'}
       </h2>

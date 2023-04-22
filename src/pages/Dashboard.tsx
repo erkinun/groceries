@@ -32,7 +32,7 @@ export function Dashboard() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-gray-100">
       <StatusBar />
       <div>Hi {profile.userName ?? user?.displayName}!</div>
       <>
@@ -47,18 +47,20 @@ export function Dashboard() {
         <ShoppingList collectionId={selectedCollection} />
 
         <div>{lists.length} shopping lists in this collection</div>
-        {
-          // TODO show the older 20 shopping lists
-          lists.map((list) => {
-            return (
-              <ShoppingList
-                key={list.id}
-                collectionId={selectedCollection}
-                groceryList={list}
-              />
-            );
-          })
-        }
+        <div className="flex flex-col gap-4">
+          {
+            // TODO show the older 20 shopping lists
+            lists.map((list) => {
+              return (
+                <ShoppingList
+                  key={list.id}
+                  collectionId={selectedCollection}
+                  groceryList={list}
+                />
+              );
+            })
+          }
+        </div>
       </>
     </div>
   );
