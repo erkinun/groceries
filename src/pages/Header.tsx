@@ -1,7 +1,8 @@
 // TODO we need to somehow feed this into react router dom at some point
+// TODO add icons for mobile view
 export function Header() {
   return (
-    <nav className="min-w-min m-0 flex flex-col bg-primary text-secondary shadow-lg">
+    <nav className="w-12 md:min-w-min m-0 flex flex-col bg-primary text-secondary shadow-lg">
       <ul>
         <NavLink to="/" text="Home" />
         <NavLink to="/dashboard" text="Dashboard" />

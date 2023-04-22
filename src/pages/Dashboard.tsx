@@ -9,6 +9,8 @@ import { useCollections, createCollection } from '../queries/collections';
 import { useShoppingLists } from '../queries/shopping-list';
 import { useProfile } from '../queries/user';
 
+// TODO check for login, else redirect to login page
+
 export function Dashboard() {
   const [user] = useAuthState(auth);
   const profile = useProfile();
@@ -30,7 +32,7 @@ export function Dashboard() {
   };
 
   return (
-    <div>
+    <div className="w-full">
       <StatusBar />
       <div>Hi {profile.userName ?? user?.displayName}!</div>
       <>

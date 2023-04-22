@@ -14,7 +14,6 @@ type ShoppingListProps = { collectionId: string; groceryList?: GroceryList };
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO use the shopping list type later on
   // TODO also might use the existing list to edit
-  // TODO add checkboxes to the items
   // TODO clear bottom input when handleItem is called
   const [items, setItems] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,17 +65,17 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
 
   return (
     <div className="p-4 border-solid border-black border  rounded-xl shadow-lg">
-      <h2>{editMode ? groceryList.name : 'Shopping list'}</h2>
+      <h2 className="font-bold">
+        {editMode ? groceryList.name : 'Shopping list'}
+      </h2>
 
-      <h3>
+      <h3 className="text-neutral-400">
         {editMode ? groceryList.date : printHumanReadableDate(new Date())}
       </h3>
 
       <div>
-        <label className="font-medium" htmlFor="name">
-          List name
-        </label>
         <input
+          className="font-bold"
           ref={inputRef}
           type="text"
           id="name"
@@ -85,14 +84,19 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         />
       </div>
 
-      <h4>Items</h4>
-      <ul>
+      <h4>{items.length} Items</h4>
+      <ul className="flex flex-col gap-2">
         {items.map((item) => (
-          <li key={item}>
+          <li
+            className="bg-zinc-200 rounded-lg px-2 py-4 flex items-center gap-2"
+            key={item}
+          >
             {
               // TODO don't add a new item, just edit the item
             }
+            <input className="bg-zinc-200" type="checkbox" />
             <input
+              className="bg-zinc-200"
               type="text"
               defaultValue={item}
               onBlur={handleItem}
@@ -107,7 +111,12 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
           onKeyDown={handleKeyDown}
         />
       </ul>
-      <button onClick={handleSave}>Save</button>
+      <button
+        className="bg-sky-500 hover:bg-sky-700 text-white py-2 px-4 rounded"
+        onClick={handleSave}
+      >
+        Save
+      </button>
       {
         // TODO this might be removed and all updates can be saved in near real time
       }
