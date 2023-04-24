@@ -3,7 +3,9 @@ import {
   createShoppingList,
   updateShoppingList,
 } from '../queries/shopping-list';
-import { GroceryList } from '../types/groceries-list';
+import { GroceryItem, GroceryList } from '../types/groceries-list';
+import { throttle } from '../utils/throttle';
+import { uuid } from '../utils/uuid';
 
 function printHumanReadableDate(date: Date) {
   return date.toLocaleDateString();
@@ -11,29 +13,40 @@ function printHumanReadableDate(date: Date) {
 
 type ShoppingListProps = { collectionId: string; groceryList?: GroceryList };
 
+function attachIds(items: GroceryItem[]) {
+  return items.map((i) => {
+    return {
+      ...i,
+      id: uuid(),
+    };
+  });
+}
+
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
-  // TODO use the shopping list type later on
   // TODO also might use the existing list to edit
   // TODO clear bottom input when handleItem is called
-  // TODO add the ability to remove items
-  // TODO add checkboxes functionality and styling with strikethrough, replace string state with grocerylist state
-  const [items, setItems] = useState<string[]>([]);
+  // TODO add checkboxes functionality and styling with strikethrough
+  // TODO handle the items id so that deletes edits etc can work properly
+  // TODO styling, get rid of inputs active borders and add some padding
+  const [items, setItems] = useState<GroceryItem[]>(
+    attachIds(groceryList?.items ?? []),
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const editMode = groceryList !== undefined;
 
   useEffect(() => {
-    setItems(groceryList?.items.map((item) => item.name) ?? []);
-  }, [editMode]);
+    setItems(attachIds(groceryList?.items ?? []));
+  }, [editMode, groceryList]);
 
-  const handleItem = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleItem = throttle((event: React.FocusEvent<HTMLInputElement>) => {
     const { value } = event.target;
 
     if (value) {
-      if (!items.includes(value)) {
-        setItems([...items, value]);
+      if (!items.find((item) => item.name === value)) {
+        setItems([...items, { name: value, fetched: false, id: uuid() }]);
       }
     }
-  };
+  });
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -42,40 +55,30 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   };
 
   const handleSave = () => {
-    console.log('clicking save with', collectionId);
-    // TODO edit mode
     if (editMode) {
       updateShoppingList(collectionId, {
         ...groceryList,
-        // TODO replace this with correct types items state
-        items: items.map((item) => ({
-          name: item,
-          fetched: false,
-        })),
+        items,
       });
     } else {
       createShoppingList(collectionId, {
         name: inputRef.current?.value ?? 'Empty list name',
         date: printHumanReadableDate(new Date()),
-        items: items.map((item) => ({
-          name: item,
-          fetched: false,
-        })),
+        items,
       });
     }
   };
 
+  const handleDelete = (item: GroceryItem) => {
+    console.log({ item });
+    setItems(items.filter((i) => i.id !== item.id || i.name !== item.name));
+  };
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg">
-      <h2 className="font-bold">
-        {editMode ? groceryList.name : 'Shopping list'}
-      </h2>
+      <h2 className="font-bold">{!editMode && 'Shopping list'}</h2>
 
-      <h3 className="text-neutral-400">
-        {editMode ? groceryList.date : printHumanReadableDate(new Date())}
-      </h3>
-
-      <div>
+      <div className="flex">
         <input
           className="font-bold"
           ref={inputRef}
@@ -84,6 +87,10 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
           placeholder="Fill in a name to remember"
           defaultValue={groceryList?.name}
         />
+
+        <h3 className="text-neutral-400">
+          {editMode ? groceryList.date : printHumanReadableDate(new Date())}
+        </h3>
       </div>
 
       <h4>{items.length} Items</h4>
@@ -91,19 +98,22 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         {items.map((item) => (
           <li
             className="bg-zinc-200 rounded-lg px-2 py-4 flex items-center gap-2"
-            key={item}
+            key={item.id}
           >
             {
               // TODO don't add a new item, just edit the item
             }
             <input className="bg-zinc-200" type="checkbox" />
             <input
-              className="bg-zinc-200"
+              className="bg-zinc-200 w-4/5"
               type="text"
-              defaultValue={item}
+              defaultValue={item.name}
               onBlur={handleItem}
               onKeyDown={handleKeyDown}
             />
+            <span onClick={() => handleDelete(item)}>
+              <i className="fa-regular fa-trash-can"></i>
+            </span>
           </li>
         ))}
         <input

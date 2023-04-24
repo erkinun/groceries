@@ -10,6 +10,7 @@ import { useShoppingLists } from '../queries/shopping-list';
 import { useProfile } from '../queries/user';
 
 // TODO check for login, else redirect to login page
+// TODO fix the duplicity when there's an edit on the shopping lists
 
 export function Dashboard() {
   const [user] = useAuthState(auth);
