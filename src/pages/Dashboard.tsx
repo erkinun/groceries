@@ -8,9 +8,12 @@ import { auth } from '../firebase';
 import { useCollections, createCollection } from '../queries/collections';
 import { useShoppingLists } from '../queries/shopping-list';
 import { useProfile } from '../queries/user';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 // TODO check for login, else redirect to login page
-// TODO fix the duplicity when there's an edit on the shopping lists
 
 export function Dashboard() {
   const [user] = useAuthState(auth);
@@ -32,6 +35,21 @@ export function Dashboard() {
     createCollection(user?.uid ?? '', inputRef.current?.value ?? '');
   };
 
+  const orderedByDateLists = lists
+    .sort((a, b) => {
+      const aDate = dayjs(a.date, 'DD/MM/YYYY');
+      const bDate = dayjs(b.date, 'DD/MM/YYYY');
+
+      if (dayjs(bDate).isBefore(dayjs(aDate))) {
+        return -1;
+      } else if (dayjs(bDate).isAfter(dayjs(aDate))) {
+        return 1;
+      } else {
+        return 0;
+      }
+    })
+    .slice(0, 20); // last 20 lists, TODO add pagination
+
   return (
     <div className="w-full bg-gray-100">
       <StatusBar />
@@ -47,20 +65,17 @@ export function Dashboard() {
 
         <ShoppingList collectionId={selectedCollection} />
 
-        <div>{lists.length} shopping lists in this collection</div>
+        <div>{orderedByDateLists.length} shopping lists in this collection</div>
         <div className="flex flex-col gap-4">
-          {
-            // TODO show the older 20 shopping lists
-            lists.map((list) => {
-              return (
-                <ShoppingList
-                  key={list.id}
-                  collectionId={selectedCollection}
-                  groceryList={list}
-                />
-              );
-            })
-          }
+          {orderedByDateLists.map((list) => {
+            return (
+              <ShoppingList
+                key={list.id}
+                collectionId={selectedCollection}
+                groceryList={list}
+              />
+            );
+          })}
         </div>
       </>
     </div>

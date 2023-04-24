@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   createShoppingList,
+  deleteShoppingList,
   updateShoppingList,
 } from '../queries/shopping-list';
 import { GroceryItem, GroceryList } from '../types/groceries-list';
@@ -8,7 +9,7 @@ import { throttle } from '../utils/throttle';
 import { uuid } from '../utils/uuid';
 
 function printHumanReadableDate(date: Date) {
-  return date.toLocaleDateString();
+  return date.toLocaleDateString(); // TODO this makes us dependent on the locale of the user
 }
 
 type ShoppingListProps = { collectionId: string; groceryList?: GroceryList };
@@ -23,11 +24,11 @@ function attachIds(items: GroceryItem[]) {
 }
 
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
-  // TODO also might use the existing list to edit
   // TODO clear bottom input when handleItem is called
+  // TODO styling of the bottom input
   // TODO add checkboxes functionality and styling with strikethrough
-  // TODO handle the items id so that deletes edits etc can work properly
   // TODO styling, get rid of inputs active borders and add some padding
+  // TODO optional date for days in future or past
   const [items, setItems] = useState<GroceryItem[]>(
     attachIds(groceryList?.items ?? []),
   );
@@ -56,27 +57,34 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
 
   const handleSave = () => {
     if (editMode) {
-      updateShoppingList(collectionId, {
+      updateShoppingList({
         ...groceryList,
         items,
       });
     } else {
       createShoppingList(collectionId, {
-        name: inputRef.current?.value ?? 'Empty list name',
+        name:
+          inputRef.current?.value ||
+          `Market for ${printHumanReadableDate(new Date())}`,
         date: printHumanReadableDate(new Date()),
         items,
       });
     }
   };
 
+  const deleteList = () => {
+    if (editMode) {
+      deleteShoppingList(collectionId, groceryList.id ?? '');
+    }
+  };
+
   const handleDelete = (item: GroceryItem) => {
-    console.log({ item });
     setItems(items.filter((i) => i.id !== item.id || i.name !== item.name));
   };
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg">
-      <h2 className="font-bold">{!editMode && 'Shopping list'}</h2>
+      <h2 className="font-bold">{!editMode && 'New shopping list'}</h2>
 
       <div className="flex">
         <input
@@ -123,12 +131,23 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
           onKeyDown={handleKeyDown}
         />
       </ul>
-      <button
-        className="bg-sky-500 hover:bg-sky-700 text-white py-2 px-4 rounded"
-        onClick={handleSave}
-      >
-        Save
-      </button>
+      <div className="flex gap-2">
+        <button
+          className="bg-sky-500 hover:bg-sky-700 text-white py-2 px-4 rounded"
+          onClick={handleSave}
+        >
+          Save
+        </button>
+        {editMode && (
+          <button
+            className="bg-rose-500 hover:bg-rose-700 text-white py-2 px-4 rounded"
+            onClick={deleteList}
+          >
+            Delete
+          </button>
+        )}
+      </div>
+
       {
         // TODO this might be removed and all updates can be saved in near real time
       }

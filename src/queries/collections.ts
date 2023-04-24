@@ -8,25 +8,24 @@ export function useCollections() {
   const [user] = useAuthState(auth);
 
   const uid = user?.uid;
-  // TODO use the grocery list later on
   const [collections, setCollections] = useState([] as GroceryLists[]);
   useEffect(() => {
     if (uid) {
       // TODO is there a better way of doing this?
       const collectionsRef = ref(database, `users/${uid}/collections`);
       get(collectionsRef).then((snapshot) => {
-        const newCollections = [] as GroceryLists[];
         snapshot.forEach((child) => {
           const realRef = ref(database, `collections/${child.val()}`);
           onValue(realRef, (collectionSnap) => {
             const collectionData = collectionSnap.val() as GroceryLists;
-            newCollections.push({
-              name: collectionData.name,
-              id: child.val(),
-              lists: [],
-            });
-            setCollections(
-              Array.from(new Set([...collections, ...newCollections])),
+            setCollections((existingCollections) =>
+              existingCollections.concat([
+                {
+                  name: collectionData.name,
+                  id: child.val(),
+                  lists: [],
+                },
+              ]),
             );
           });
         });

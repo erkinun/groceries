@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { GroceryList } from '../types/groceries-list';
-import { ref, onValue, child, push, update, get } from 'firebase/database';
+import {
+  ref,
+  onValue,
+  child,
+  get,
+  push,
+  update,
+  remove,
+} from 'firebase/database';
 import { database } from '../firebase';
 
 export function useShoppingLists(uid: string, collectionId: string) {
@@ -18,14 +26,16 @@ export function useShoppingLists(uid: string, collectionId: string) {
           onValue(realRef, (listSnap) => {
             const listData = listSnap.val() as GroceryList;
             setShoppingLists((existingLists) =>
-              existingLists.concat([
-                {
-                  name: listData.name,
-                  id: child.val(),
-                  date: listData.date,
-                  items: listData.items,
-                },
-              ]),
+              existingLists.find((list) => list.id === child.val())
+                ? existingLists
+                : existingLists.concat([
+                    {
+                      name: listData.name,
+                      id: child.val(),
+                      date: listData.date,
+                      items: listData.items,
+                    },
+                  ]),
             );
           });
         });
@@ -57,14 +67,36 @@ export async function createShoppingList(
 }
 
 // TODO check user has access to the list
-export async function updateShoppingList(
-  collectionId: string,
-  shoppingList: GroceryList,
-) {
+export async function updateShoppingList(shoppingList: GroceryList) {
   try {
     const newShoppingListKey = shoppingList.id ?? '';
     const shoppingListsRef = ref(database, `lists/${newShoppingListKey}`);
     await update(shoppingListsRef, shoppingList);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// TODO check user has access to the list
+export async function deleteShoppingList(
+  collectionId: string,
+  shoppingListId: string,
+) {
+  try {
+    const deletingKey = shoppingListId ?? '';
+    const collectionListsRef = ref(
+      database,
+      `collections/${collectionId}/lists`,
+    );
+    get(collectionListsRef).then((snapshot) => {
+      snapshot.forEach((child) => {
+        if (child.val() === deletingKey) {
+          remove(child.ref);
+        }
+      });
+    });
+    const shoppingListsRef = ref(database, `lists/${deletingKey}`);
+    await remove(shoppingListsRef);
   } catch (error) {
     console.error(error);
   }
