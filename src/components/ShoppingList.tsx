@@ -26,12 +26,11 @@ function attachIds(items: GroceryItem[]) {
 
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO clear bottom input when handleItem is called
-  // TODO styling of the bottom input
+  // TODO fix the styling
   // TODO styling, get rid of inputs active borders and add some padding
   // TODO optional date for days in future or past
   // TODO maybe save all changes as user types with throttle/debounce
   // TODO maybe show a toast when save is done?
-  // TODO order by fetched items, fetched ones will be at the bottom
 
   const [items, setItems] = useState<GroceryItem[]>(
     attachIds(groceryList?.items ?? []),
@@ -101,7 +100,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-lg">
+    <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col gap-2">
       <h2 className="font-bold">{!editMode && 'New shopping list'}</h2>
 
       <div className="flex">
@@ -121,38 +120,43 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
 
       <h4>{items.length} Items</h4>
       <ul className="flex flex-col gap-2">
-        {items.map((item) => (
-          <li
-            className={classNames(
-              'bg-rosey rounded-lg px-2 py-4 flex items-center gap-2',
+        {items
+          .sort((a, b) => {
+            return a.fetched === b.fetched ? 0 : a.fetched ? 1 : -1;
+          })
+          .map((item) => (
+            <li
+              className={classNames(
+                'bg-rosey rounded-lg px-2 py-4 flex items-center gap-2',
+                {
+                  'line-through': item.fetched,
+                },
+              )}
+              key={item.id}
+            >
               {
-                'line-through': item.fetched,
-              },
-            )}
-            key={item.id}
-          >
-            {
-              // TODO don't add a new item, just edit the item
-            }
-            <input
-              checked={item.fetched}
-              onChange={() => handleCheckbox(item.id ?? '')}
-              className="bg-rosey"
-              type="checkbox"
-            />
-            <input
-              className="bg-rosey w-4/5"
-              type="text"
-              defaultValue={item.name}
-              onBlur={handleItem}
-              onKeyDown={handleKeyDown}
-            />
-            <span onClick={() => handleDelete(item)}>
-              <i className="fa-regular fa-trash-can"></i>
-            </span>
-          </li>
-        ))}
+                // TODO don't add a new item, just edit the item
+              }
+              <input
+                checked={item.fetched}
+                onChange={() => handleCheckbox(item.id ?? '')}
+                className="bg-rosey"
+                type="checkbox"
+              />
+              <input
+                className="bg-rosey w-4/5"
+                type="text"
+                defaultValue={item.name}
+                onBlur={handleItem}
+                onKeyDown={handleKeyDown}
+              />
+              <span onClick={() => handleDelete(item)}>
+                <i className="fa-regular fa-trash-can"></i>
+              </span>
+            </li>
+          ))}
         <input
+          className="p-2 rounded-lg text-lg border-primary border-2"
           type="text"
           placeholder="new item"
           onBlur={handleItem}

@@ -14,7 +14,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 // TODO check for login, else redirect to login page
-
+// TODO make the router work with netlify
 export function Dashboard() {
   const [user] = useAuthState(auth);
   const profile = useProfile();
