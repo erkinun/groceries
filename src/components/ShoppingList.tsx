@@ -7,6 +7,7 @@ import {
 import { GroceryItem, GroceryList } from '../types/groceries-list';
 import { throttle } from '../utils/throttle';
 import { uuid } from '../utils/uuid';
+import classNames from 'classnames';
 
 function printHumanReadableDate(date: Date) {
   return date.toLocaleDateString(); // TODO this makes us dependent on the locale of the user
@@ -26,9 +27,10 @@ function attachIds(items: GroceryItem[]) {
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO clear bottom input when handleItem is called
   // TODO styling of the bottom input
-  // TODO add checkboxes functionality and styling with strikethrough
   // TODO styling, get rid of inputs active borders and add some padding
   // TODO optional date for days in future or past
+  // TODO maybe save all changes as user types with throttle/debounce
+  // TODO maybe show a toast when save is done?
   const [items, setItems] = useState<GroceryItem[]>(
     attachIds(groceryList?.items ?? []),
   );
@@ -82,6 +84,20 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
     setItems(items.filter((i) => i.id !== item.id || i.name !== item.name));
   };
 
+  const handleCheckbox = (itemId: string) => {
+    setItems(
+      items.map((item) => {
+        if (item.id === itemId) {
+          return {
+            ...item,
+            fetched: !item.fetched,
+          };
+        }
+        return item;
+      }),
+    );
+  };
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg">
       <h2 className="font-bold">{!editMode && 'New shopping list'}</h2>
@@ -105,13 +121,23 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
           <li
-            className="bg-zinc-200 rounded-lg px-2 py-4 flex items-center gap-2"
+            className={classNames(
+              'bg-zinc-200 rounded-lg px-2 py-4 flex items-center gap-2',
+              {
+                'line-through': item.fetched,
+              },
+            )}
             key={item.id}
           >
             {
               // TODO don't add a new item, just edit the item
             }
-            <input className="bg-zinc-200" type="checkbox" />
+            <input
+              checked={item.fetched}
+              onChange={() => handleCheckbox(item.id ?? '')}
+              className="bg-zinc-200"
+              type="checkbox"
+            />
             <input
               className="bg-zinc-200 w-4/5"
               type="text"
