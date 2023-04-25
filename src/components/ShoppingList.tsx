@@ -31,6 +31,8 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO optional date for days in future or past
   // TODO maybe save all changes as user types with throttle/debounce
   // TODO maybe show a toast when save is done?
+  // TODO order by fetched items, fetched ones will be at the bottom
+
   const [items, setItems] = useState<GroceryItem[]>(
     attachIds(groceryList?.items ?? []),
   );
@@ -122,7 +124,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         {items.map((item) => (
           <li
             className={classNames(
-              'bg-zinc-200 rounded-lg px-2 py-4 flex items-center gap-2',
+              'bg-rosey rounded-lg px-2 py-4 flex items-center gap-2',
               {
                 'line-through': item.fetched,
               },
@@ -135,11 +137,11 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
             <input
               checked={item.fetched}
               onChange={() => handleCheckbox(item.id ?? '')}
-              className="bg-zinc-200"
+              className="bg-rosey"
               type="checkbox"
             />
             <input
-              className="bg-zinc-200 w-4/5"
+              className="bg-rosey w-4/5"
               type="text"
               defaultValue={item.name}
               onBlur={handleItem}
@@ -159,14 +161,14 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
       </ul>
       <div className="flex gap-2">
         <button
-          className="bg-sky-500 hover:bg-sky-700 text-white py-2 px-4 rounded"
+          className="bg-primary hover:bg-sky-700 text-white py-2 px-4 rounded"
           onClick={handleSave}
         >
           Save
         </button>
         {editMode && (
           <button
-            className="bg-rose-500 hover:bg-rose-700 text-white py-2 px-4 rounded"
+            className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
             onClick={deleteList}
           >
             Delete
