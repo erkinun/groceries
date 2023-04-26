@@ -25,10 +25,11 @@ function attachIds(items: GroceryItem[]) {
 }
 
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
-  // TODO clear bottom input when handleItem is called
   // TODO optional date picker for days in future or past
   // TODO maybe save all changes as user types with throttle/debounce
   // TODO maybe show a toast when save is done?
+
+  const [newInputValue, setNewInputValue] = useState<string>('');
 
   const [items, setItems] = useState<GroceryItem[]>(
     attachIds(groceryList?.items ?? []),
@@ -48,6 +49,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         setItems([...items, { name: value, fetched: false, id: uuid() }]);
       }
     }
+    setNewInputValue('');
   });
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -157,6 +159,8 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
           className="p-2 rounded-lg text-lg border-primary border-2"
           type="text"
           placeholder="new item"
+          value={newInputValue}
+          onChange={(e) => setNewInputValue(e.target.value)}
           onBlur={handleItem}
           onKeyDown={handleKeyDown}
         />
