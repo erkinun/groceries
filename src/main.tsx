@@ -10,6 +10,7 @@ import { Profile } from './pages/Profile';
 import { Share } from './pages/Share';
 
 import './index.css';
+import StatusBar from './components/StatusBar';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <div className="flex">
       <Header />
-      <RouterProvider router={router} />
+      <div>
+        <StatusBar />
+        <RouterProvider router={router} />
+      </div>
     </div>
   </React.StrictMode>,
 );

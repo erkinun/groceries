@@ -14,10 +14,10 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 // TODO check for login, else redirect to login page
-// TODO make the router work with netlify
+// TODO style the name, show it instead of user name? also style collections and collection input
+// TODO grey out the older lists, older than today
 export function Dashboard() {
   const [user] = useAuthState(auth);
-  const profile = useProfile();
   const collections = useCollections();
   const [selectedCollection, setSelectedCollection] = useState<string>(
     collections[0]?.id ?? '',
@@ -52,8 +52,6 @@ export function Dashboard() {
 
   return (
     <div className="w-full bg-cream text-neutral-600 p-2">
-      <StatusBar />
-      <div>Hi {profile.userName ?? user?.displayName}!</div>
       <>
         <h2>Your collections</h2>
 

@@ -144,7 +144,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
                 type="checkbox"
               />
               <input
-                className="bg-rosey w-4/5"
+                className="bg-rosey w-4/5 focus:outline-none"
                 type="text"
                 defaultValue={item.name}
                 onBlur={handleItem}
