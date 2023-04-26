@@ -28,6 +28,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO optional date picker for days in future or past
   // TODO maybe save all changes as user types with throttle/debounce
   // TODO maybe show a toast when save is done?
+  // TODO use the new input value when saving?
 
   const [newInputValue, setNewInputValue] = useState<string>('');
 
