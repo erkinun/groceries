@@ -51,7 +51,7 @@ export function Dashboard() {
     .slice(0, 20); // last 20 lists, TODO add pagination
 
   return (
-    <div className="w-full bg-cream text-neutral-600">
+    <div className="w-full bg-cream text-neutral-600 p-2">
       <StatusBar />
       <div>Hi {profile.userName ?? user?.displayName}!</div>
       <>
