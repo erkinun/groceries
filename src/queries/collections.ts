@@ -13,19 +13,23 @@ export function useCollections() {
     if (uid) {
       // TODO is there a better way of doing this?
       const collectionsRef = ref(database, `users/${uid}/collections`);
-      get(collectionsRef).then((snapshot) => {
+      onValue(collectionsRef, (snapshot) => {
         snapshot.forEach((child) => {
           const realRef = ref(database, `collections/${child.val()}`);
           onValue(realRef, (collectionSnap) => {
             const collectionData = collectionSnap.val() as GroceryLists;
             setCollections((existingCollections) =>
-              existingCollections.concat([
-                {
-                  name: collectionData.name,
-                  id: child.val(),
-                  lists: [],
-                },
-              ]),
+              existingCollections.find(
+                (collection) => collection.id === child.val(),
+              )
+                ? existingCollections
+                : existingCollections.concat([
+                    {
+                      name: collectionData.name,
+                      id: child.val(),
+                      lists: [],
+                    },
+                  ]),
             );
           });
         });
