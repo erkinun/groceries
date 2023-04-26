@@ -26,8 +26,6 @@ function attachIds(items: GroceryItem[]) {
 
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO clear bottom input when handleItem is called
-  // TODO fix the styling
-  // TODO styling, get rid of inputs active borders and add some padding
   // TODO optional date for days in future or past
   // TODO maybe save all changes as user types with throttle/debounce
   // TODO maybe show a toast when save is done?

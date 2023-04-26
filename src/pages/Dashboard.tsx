@@ -2,12 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { CollectionList } from '../components/CollectionList';
 import { ShoppingList } from '../components/ShoppingList';
-import StatusBar from '../components/StatusBar';
 
 import { auth } from '../firebase';
 import { useCollections, createCollection } from '../queries/collections';
 import { useShoppingLists } from '../queries/shopping-list';
-import { useProfile } from '../queries/user';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -16,6 +14,9 @@ dayjs.extend(customParseFormat);
 // TODO check for login, else redirect to login page
 // TODO style the name, show it instead of user name? also style collections and collection input
 // TODO grey out the older lists, older than today
+// TODO handle the collections, at least style them, does selecting a collection work?
+// TODO make sure that changing a list updates itself on others screens
+// TODO eslint
 export function Dashboard() {
   const [user] = useAuthState(auth);
   const collections = useCollections();

@@ -27,7 +27,16 @@ export function useShoppingLists(uid: string, collectionId: string) {
             const listData = listSnap.val() as GroceryList;
             setShoppingLists((existingLists) =>
               existingLists.find((list) => list.id === child.val())
-                ? existingLists
+                ? existingLists.map((list) =>
+                    list.id === child.val()
+                      ? {
+                          name: listData.name,
+                          id: child.val(),
+                          date: listData.date,
+                          items: listData.items,
+                        }
+                      : list,
+                  )
                 : existingLists.concat([
                     {
                       name: listData.name,

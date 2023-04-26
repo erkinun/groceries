@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <div className="flex">
       <Header />
-      <div>
+      <div className="w-screen bg-cream">
         <StatusBar />
         <RouterProvider router={router} />
       </div>
