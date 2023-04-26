@@ -2,10 +2,9 @@
 
 import classNames from 'classnames';
 
-// TODO add icons for mobile view
 export function Header() {
   return (
-    <nav className="w-12 md:min-w-min m-0 flex flex-col bg-primary text-white shadow-lg">
+    <nav className="sticky top-0 left-0 w-12 h-screen md:min-w-min m-0 flex flex-col bg-primary text-white shadow-lg">
       <ul>
         <NavLink to="/" text="Home" icon="fa-solid fa-house-user" />
         <NavLink
