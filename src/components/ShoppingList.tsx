@@ -165,7 +165,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
       </ul>
       <div className="flex gap-2">
         <button
-          className="bg-primary hover:bg-sky-700 text-white py-2 px-4 rounded"
+          className="bg-primary hover:bg-primaryBold text-white py-2 px-4 rounded"
           onClick={handleSave}
         >
           Save
