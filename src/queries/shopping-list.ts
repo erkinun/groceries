@@ -25,8 +25,11 @@ export function useShoppingLists(uid: string, collectionId: string) {
           const realRef = ref(database, `lists/${child.val()}`);
           onValue(realRef, (listSnap) => {
             const listData = listSnap.val() as GroceryList;
-            setShoppingLists((existingLists) =>
-              existingLists.find((list) => list.id === child.val())
+            setShoppingLists((existingLists) => {
+              if (listData === null) {
+                return existingLists.filter((list) => list.id !== child.val());
+              }
+              return existingLists.find((list) => list.id === child.val())
                 ? existingLists.map((list) =>
                     list.id === child.val()
                       ? {
@@ -44,8 +47,8 @@ export function useShoppingLists(uid: string, collectionId: string) {
                       date: listData.date,
                       items: listData.items,
                     },
-                  ]),
-            );
+                  ]);
+            });
           });
         });
       });
