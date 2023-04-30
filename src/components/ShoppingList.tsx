@@ -5,9 +5,9 @@ import {
   updateShoppingList,
 } from '../queries/shopping-list';
 import { GroceryItem, GroceryList } from '../types/groceries-list';
-import { throttle } from '../utils/throttle';
 import { uuid } from '../utils/uuid';
 import classNames from 'classnames';
+import { debounce } from '../utils/debounce';
 
 function printHumanReadableDate(date: Date) {
   return date.toLocaleDateString(); // TODO this makes us dependent on the locale of the user
@@ -26,8 +26,7 @@ function attachIds(items: GroceryItem[]) {
 
 export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO optional date picker for days in future or past
-  // TODO maybe save all changes as user types with throttle/debounce
-  // TODO maybe show a toast when save is done?
+  // TODO maybe show a toast when save is done? and refresh the list?
   // TODO use the new input value when saving?
 
   const [newInputValue, setNewInputValue] = useState<string>('');
@@ -42,25 +41,40 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
     setItems(attachIds(groceryList?.items ?? []));
   }, [editMode, groceryList]);
 
-  const handleItem = throttle((event: React.FocusEvent<HTMLInputElement>) => {
+  const handleItem = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: string | undefined,
+  ) => {
     const { value } = event.target;
 
     if (value) {
-      if (!items.find((item) => item.name === value)) {
-        setItems([...items, { name: value, fetched: false, id: uuid() }]);
+      let newItem: GroceryItem;
+      if (id) {
+        if (items.find((item) => item.id === id)) {
+          newItem = { name: value, fetched: false, id };
+          handleSave(items.map((item) => (item.id === id ? newItem : item)));
+        }
+      } else {
+        newItem = { name: value, fetched: false, id: uuid() };
+        handleSave([...items, newItem]);
       }
-    }
-    setNewInputValue('');
-  });
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleItem(event as any);
+      setNewInputValue('');
     }
   };
 
-  const handleSave = () => {
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    id: string | undefined,
+  ) => {
+    if (event.key === 'Enter') {
+      handleItem(event as any, id);
+    }
+  };
+
+  const handleSave = debounce((items: GroceryItem[]) => {
     if (editMode) {
+      console.log('saving the list: ', items);
       updateShoppingList({
         ...groceryList,
         items,
@@ -74,7 +88,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         items,
       });
     }
-  };
+  }, 200);
 
   const deleteList = () => {
     if (editMode) {
@@ -83,11 +97,11 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   };
 
   const handleDelete = (item: GroceryItem) => {
-    setItems(items.filter((i) => i.id !== item.id || i.name !== item.name));
+    handleSave(items.filter((i) => i.id !== item.id || i.name !== item.name));
   };
 
   const handleCheckbox = (itemId: string) => {
-    setItems(
+    handleSave(
       items.map((item) => {
         if (item.id === itemId) {
           return {
@@ -135,9 +149,6 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
               )}
               key={item.id}
             >
-              {
-                // TODO don't add a new item, just edit the item
-              }
               <input
                 checked={item.fetched}
                 onChange={() => handleCheckbox(item.id ?? '')}
@@ -148,8 +159,8 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
                 className="bg-rosey w-4/5 focus:outline-none"
                 type="text"
                 defaultValue={item.name}
-                onBlur={handleItem}
-                onKeyDown={handleKeyDown}
+                onChange={debounce((e) => handleItem(e, item.id), 1000)}
+                onKeyDown={(e) => handleKeyDown(e, item.id)}
               />
               <span onClick={() => handleDelete(item)}>
                 <i className="fa-regular fa-trash-can"></i>
@@ -162,17 +173,11 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
           placeholder="new item"
           value={newInputValue}
           onChange={(e) => setNewInputValue(e.target.value)}
-          onBlur={handleItem}
-          onKeyDown={handleKeyDown}
+          onBlur={(e) => handleItem(e, undefined)}
+          onKeyDown={(e) => handleKeyDown(e, undefined)}
         />
       </ul>
       <div className="flex gap-2">
-        <button
-          className="bg-primary hover:bg-primaryBold text-white py-2 px-4 rounded"
-          onClick={handleSave}
-        >
-          Save
-        </button>
         {editMode && (
           <button
             className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
@@ -181,6 +186,9 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
             Delete
           </button>
         )}
+        {
+          // TODO conver this button to a icon on the top right etc
+        }
       </div>
 
       {
