@@ -3,6 +3,7 @@ import { useOnlineStatus } from '../hooks/online-status';
 import { useProfile } from '../queries/user';
 import { auth } from '../firebase';
 
+// TODO we can use the user's profile picture here
 export default function StatusBar() {
   const isOnline = useOnlineStatus();
   const [user] = useAuthState(auth);

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, authFn } from '../firebase';
 
 export function Login() {
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
   useEffect(() => {
     // TODO check if this works, if not, use a different hook

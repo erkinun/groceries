@@ -74,7 +74,6 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
 
   const handleSave = debounce((items: GroceryItem[]) => {
     if (editMode) {
-      console.log('saving the list: ', items);
       updateShoppingList({
         ...groceryList,
         items,
