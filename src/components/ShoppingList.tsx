@@ -8,6 +8,7 @@ import { GroceryItem, GroceryList } from '../types/groceries-list';
 import { uuid } from '../utils/uuid';
 import classNames from 'classnames';
 import { debounce } from '../utils/debounce';
+import Modal from './Modal';
 
 function printHumanReadableDate(date: Date) {
   return date.toLocaleDateString(); // TODO this makes us dependent on the locale of the user
@@ -30,6 +31,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   // TODO use the new input value when saving?
 
   const [newInputValue, setNewInputValue] = useState<string>('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const [items, setItems] = useState<GroceryItem[]>(
     attachIds(groceryList?.items ?? []),
@@ -180,19 +182,46 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         {editMode && (
           <button
             className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
-            onClick={deleteList}
+            onClick={() => setDeleteModalOpen(true)}
           >
             Delete
           </button>
+        )}
+        {editMode && (
+          <Modal
+            isOpen={deleteModalOpen}
+            onClose={() => setDeleteModalOpen(false)}
+          >
+            <div className="p-4">
+              <h2 className="font-bold">Are you sure?</h2>
+              <p>
+                This action is irreversible. You will lose all the items in this
+                list.
+              </p>
+              <div className="mt-2 flex gap-2">
+                <button
+                  className="bg-cream hover:bg-gray-700 text-white py-2 px-4 rounded"
+                  onClick={() => setDeleteModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
+                  onClick={() => {
+                    deleteList();
+                    setDeleteModalOpen(false);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </Modal>
         )}
         {
           // TODO conver this button to a icon on the top right etc
         }
       </div>
-
-      {
-        // TODO this might be removed and all updates can be saved in near real time
-      }
     </div>
   );
 }
