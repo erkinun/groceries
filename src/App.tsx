@@ -31,22 +31,24 @@ const router = createBrowserRouter([
 ]);
 
 export function App() {
-  const [user, loading] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth);
   useEffect(() => {
     if (loading) {
-      // TODO maybe trigger a loading screen
       return;
     }
-    console.log({ user });
-    if (!user) window.location.href = '/';
+
+    if (!user && window.location.pathname !== '/') window.location.href = '/';
   }, [user, loading]);
+
+  error && console.error(error);
 
   return (
     <div className="flex">
       <Header />
       <div className="w-screen bg-cream">
         <StatusBar />
-        <RouterProvider router={router} />
+        {loading && <div>Loading</div>}
+        {!loading && <RouterProvider router={router} />}
       </div>
     </div>
   );

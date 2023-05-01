@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
   signOut,
   setPersistence,
-  browserSessionPersistence,
+  browserLocalPersistence,
 } from 'firebase/auth';
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -34,7 +34,7 @@ const googleAuthProvider = new GoogleAuthProvider();
 
 export const authFn = async () => {
   try {
-    setPersistence(auth, browserSessionPersistence);
+    setPersistence(auth, browserLocalPersistence);
     const res = await signInWithPopup(auth, googleAuthProvider);
     // TODO create the user in the database
     console.log(res.user);

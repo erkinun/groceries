@@ -12,7 +12,6 @@ export function Login() {
     // TODO and put it to main.tsx
     // TODO and make the login duration longer
     if (loading) {
-      // TODO maybe trigger a loading screen
       return;
     }
     if (user) navigate('/dashboard');
