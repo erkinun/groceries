@@ -12,6 +12,7 @@ export function Header() {
           text="Dashboard"
           icon="fa-solid fa-table-list"
         />
+        <NavLink to="/collections" text="Collections" icon="fa-solid fa-tags" />
         <NavLink to="/profile" text="Profile" icon="fa-user" />
         <NavLink to="/share" text="Share" icon="fa-solid fa-share" />
       </ul>

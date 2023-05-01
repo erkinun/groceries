@@ -9,6 +9,7 @@ import { Share } from './pages/Share';
 import { auth } from './firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect } from 'react';
+import { Collections } from './pages/Collections';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: '/dashboard',
     element: <Dashboard />,
+  },
+  {
+    path: '/collections',
+    element: <Collections />,
   },
   {
     path: '/profile',
