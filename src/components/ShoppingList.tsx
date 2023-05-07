@@ -9,6 +9,7 @@ import { uuid } from '../utils/uuid';
 import classNames from 'classnames';
 import { debounce } from '../utils/debounce';
 import Modal from './Modal';
+import { useDrag, useDrop } from 'react-dnd';
 
 function printHumanReadableDate(date: Date) {
   return date.toLocaleDateString(); // TODO this makes us dependent on the locale of the user
@@ -115,6 +116,20 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
     );
   };
 
+  const handleReorder = (draggId: string, hoverId: string) => {
+    const dragItem = items.find((item) => item.id === draggId);
+    const hoverItem = items.find((item) => item.id === hoverId);
+    if (dragItem && hoverItem) {
+      const dragIndex = items.indexOf(dragItem);
+      const hoverIndex = items.indexOf(hoverItem);
+      const newItems = [...items];
+      newItems.splice(dragIndex, 1);
+      newItems.splice(hoverIndex, 0, dragItem);
+      setItems(newItems);
+      handleSave(newItems);
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col gap-2">
       <h2 className="font-bold">{!editMode && 'New shopping list'}</h2>
@@ -141,32 +156,15 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
             return a.fetched === b.fetched ? 0 : a.fetched ? 1 : -1;
           })
           .map((item) => (
-            <li
-              className={classNames(
-                'bg-rosey rounded-lg px-2 py-4 flex items-center gap-2',
-                {
-                  'line-through': item.fetched,
-                },
-              )}
+            <DropItem
               key={item.id}
-            >
-              <input
-                checked={item.fetched}
-                onChange={() => handleCheckbox(item.id ?? '')}
-                className="bg-rosey"
-                type="checkbox"
-              />
-              <input
-                className="bg-rosey w-4/5 focus:outline-none"
-                type="text"
-                defaultValue={item.name}
-                onChange={debounce((e) => handleItem(e, item.id), 1000)}
-                onKeyDown={(e) => handleKeyDown(e, item.id)}
-              />
-              <span onClick={() => handleDelete(item)}>
-                <i className="fa-regular fa-trash-can"></i>
-              </span>
-            </li>
+              item={item}
+              handleCheckbox={handleCheckbox}
+              handleItem={handleItem}
+              handleKeyDown={handleKeyDown}
+              handleDelete={handleDelete}
+              handleReorder={handleReorder}
+            />
           ))}
         <input
           className="p-2 rounded-lg text-lg border-primary border-2"
@@ -178,7 +176,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
           onKeyDown={(e) => handleKeyDown(e, undefined)}
         />
       </ul>
-      <div className="flex gap-2">
+      <div className="flex justify-items-end gap-2">
         {editMode && (
           <button
             className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
@@ -187,41 +185,126 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
             Delete
           </button>
         )}
-        {editMode && (
-          <Modal
-            isOpen={deleteModalOpen}
-            onClose={() => setDeleteModalOpen(false)}
-          >
-            <div className="p-4">
-              <h2 className="font-bold">Are you sure?</h2>
-              <p>
-                This action is irreversible. You will lose all the items in this
-                list.
-              </p>
-              <div className="mt-2 flex gap-2">
-                <button
-                  className="bg-cream hover:bg-gray-700 text-white py-2 px-4 rounded"
-                  onClick={() => setDeleteModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
-                  onClick={() => {
-                    deleteList();
-                    setDeleteModalOpen(false);
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </Modal>
-        )}
+        {editMode &&
+          deleteModal(deleteModalOpen, setDeleteModalOpen, deleteList)}
         {
           // TODO conver this button to a icon on the top right etc
         }
       </div>
     </div>
+  );
+}
+
+type ItemProps = {
+  item: GroceryItem;
+  handleCheckbox: (itemId: string) => void;
+  handleItem: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: string | undefined,
+  ) => void;
+  handleKeyDown: (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    id: string | undefined,
+  ) => void;
+  handleDelete: (item: GroceryItem) => void;
+};
+
+function DropItem(
+  props: ItemProps & {
+    handleReorder: (dragId: string, hoverId: string) => void;
+  },
+) {
+  const [, drop] = useDrop(() => ({
+    accept: 'shopping-item',
+    drop: (item: any) => {
+      console.log({ item, original: props.item });
+      props.handleReorder(item.id, props.item.id ?? '');
+    },
+  }));
+
+  return (
+    <div ref={drop}>
+      <Item {...props} />
+    </div>
+  );
+}
+
+function Item({
+  item,
+  handleCheckbox,
+  handleItem,
+  handleKeyDown,
+  handleDelete,
+}: ItemProps) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'shopping-item',
+    item,
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+  return (
+    <li
+      ref={item.fetched ? null : drag}
+      className={classNames(
+        'bg-rosey rounded-lg px-2 py-4 flex items-center gap-2',
+        {
+          'line-through': item.fetched,
+          'opacity-50': isDragging,
+        },
+      )}
+      key={item.id}
+    >
+      <input
+        checked={item.fetched}
+        onChange={() => handleCheckbox(item.id ?? '')}
+        className="bg-rosey"
+        type="checkbox"
+      />
+      <input
+        className="bg-rosey w-4/5 focus:outline-none"
+        type="text"
+        defaultValue={item.name}
+        onChange={debounce((e) => handleItem(e, item.id), 1000)}
+        onKeyDown={(e) => handleKeyDown(e, item.id)}
+      />
+      <span onClick={() => handleDelete(item)}>
+        <i className="fa-regular fa-trash-can"></i>
+      </span>
+    </li>
+  );
+}
+
+function deleteModal(
+  deleteModalOpen: boolean,
+  setDeleteModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  deleteList: () => void,
+) {
+  return (
+    <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+      <div className="p-4">
+        <h2 className="font-bold">Are you sure?</h2>
+        <p>
+          This action is irreversible. You will lose all the items in this list.
+        </p>
+        <div className="mt-2 flex gap-2">
+          <button
+            className="bg-cream hover:bg-gray-700 text-white py-2 px-4 rounded"
+            onClick={() => setDeleteModalOpen(false)}
+          >
+            Cancel
+          </button>
+          <button
+            className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
+            onClick={() => {
+              deleteList();
+              setDeleteModalOpen(false);
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }
