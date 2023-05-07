@@ -176,7 +176,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
           onKeyDown={(e) => handleKeyDown(e, undefined)}
         />
       </ul>
-      <div className="flex justify-items-end gap-2">
+      <div className="flex justify-end gap-2">
         {editMode && (
           <button
             className="bg-rose-200 hover:bg-rose-700 text-white py-2 px-4 rounded"
