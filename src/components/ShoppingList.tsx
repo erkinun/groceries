@@ -149,6 +149,15 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         </h3>
       </div>
 
+      <input
+        className="p-2 rounded-lg text-lg border-primary border-2"
+        type="text"
+        placeholder="new item"
+        value={newInputValue}
+        onChange={(e) => setNewInputValue(e.target.value)}
+        onBlur={(e) => handleItem(e, undefined)}
+        onKeyDown={(e) => handleKeyDown(e, undefined)}
+      />
       <h4>{items.length} Items</h4>
       <ul className="flex flex-col gap-2">
         {items
@@ -166,15 +175,6 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
               handleReorder={handleReorder}
             />
           ))}
-        <input
-          className="p-2 rounded-lg text-lg border-primary border-2"
-          type="text"
-          placeholder="new item"
-          value={newInputValue}
-          onChange={(e) => setNewInputValue(e.target.value)}
-          onBlur={(e) => handleItem(e, undefined)}
-          onKeyDown={(e) => handleKeyDown(e, undefined)}
-        />
       </ul>
       <div className="flex justify-end gap-2">
         {editMode && (
