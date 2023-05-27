@@ -10,6 +10,7 @@ import { auth } from './firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect } from 'react';
 import { Collections } from './pages/Collections';
+import { Templates } from './pages/Templates';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/dashboard',
     element: <Dashboard />,
+  },
+  {
+    path: '/templates',
+    element: <Templates />,
   },
   {
     path: '/collections',

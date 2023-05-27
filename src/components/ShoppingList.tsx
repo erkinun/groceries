@@ -4,18 +4,33 @@ import {
   deleteShoppingList,
   updateShoppingList,
 } from '../queries/shopping-list';
-import { GroceryItem, GroceryList } from '../types/groceries-list';
+import {
+  GroceryItem,
+  GroceryList,
+  TemplateList,
+} from '../types/groceries-list';
 import { uuid } from '../utils/uuid';
 import classNames from 'classnames';
 import { debounce } from '../utils/debounce';
 import Modal from './Modal';
 import { useDrag, useDrop } from 'react-dnd';
+import { printHumanReadableDate } from '../utils/date';
+import { TemplatePicker } from './TemplatePicker';
 
-function printHumanReadableDate(date: Date) {
-  return date.toLocaleDateString(); // TODO this makes us dependent on the locale of the user
-}
-
-type ShoppingListProps = { collectionId: string; groceryList?: GroceryList };
+type ShoppingListProps = {
+  collectionId: string;
+  groceryList?: GroceryList;
+  saveFn?: (
+    items: GroceryItem[],
+    editMode: boolean,
+    collectionId: string,
+    groceryList?: GroceryList,
+    listName?: string,
+  ) => void;
+  deleteFn?: (collectionId: string, listId: string) => void;
+  templateMode?: boolean;
+  templates: TemplateList[];
+};
 
 function attachIds(items: GroceryItem[]) {
   return items.map((i) => {
@@ -26,7 +41,36 @@ function attachIds(items: GroceryItem[]) {
   });
 }
 
-export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
+// default function to save a shopping list
+function saveShoppingList(
+  items: GroceryItem[],
+  editMode: boolean,
+  collectionId: string,
+  groceryList?: GroceryList,
+  listName?: string,
+) {
+  if (groceryList !== undefined && editMode) {
+    updateShoppingList({
+      ...groceryList,
+      items,
+    });
+  } else {
+    createShoppingList(collectionId, {
+      name: listName || `Market for ${printHumanReadableDate(new Date())}`,
+      date: printHumanReadableDate(new Date()),
+      items,
+    });
+  }
+}
+
+export function ShoppingList({
+  collectionId,
+  groceryList,
+  saveFn = saveShoppingList,
+  deleteFn = deleteShoppingList,
+  templateMode = false,
+  templates = [],
+}: ShoppingListProps) {
   // TODO optional date picker for days in future or past
   // TODO maybe show a toast when save is done? and refresh the list?
   // TODO use the new input value when saving?
@@ -43,6 +87,16 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
   useEffect(() => {
     setItems(attachIds(groceryList?.items ?? []));
   }, [editMode, groceryList]);
+
+  const innerSave = (items: GroceryItem[]) => {
+    saveFn(items, editMode, collectionId, groceryList, inputRef.current?.value);
+  };
+
+  const deleteList = () => {
+    if (editMode) {
+      deleteFn(collectionId, groceryList.id ?? '');
+    }
+  };
 
   const handleItem = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -75,28 +129,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
     }
   };
 
-  const handleSave = debounce((items: GroceryItem[]) => {
-    if (editMode) {
-      updateShoppingList({
-        ...groceryList,
-        items,
-      });
-    } else {
-      createShoppingList(collectionId, {
-        name:
-          inputRef.current?.value ||
-          `Market for ${printHumanReadableDate(new Date())}`,
-        date: printHumanReadableDate(new Date()),
-        items,
-      });
-    }
-  }, 200);
-
-  const deleteList = () => {
-    if (editMode) {
-      deleteShoppingList(collectionId, groceryList.id ?? '');
-    }
-  };
+  const handleSave = debounce(innerSave, 200);
 
   const handleDelete = (item: GroceryItem) => {
     handleSave(items.filter((i) => i.id !== item.id || i.name !== item.name));
@@ -130,9 +163,22 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
     }
   };
 
+  const templateSelect = (templateId: string) => {
+    console.log(`selected ${templateId}`);
+    const template = templates.find((t) => t.id === templateId);
+    if (template) {
+      const newItems = items.concat(template.items);
+      setItems(newItems);
+      handleSave(newItems);
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col gap-2">
-      <h2 className="font-bold">{!editMode && 'New shopping list'}</h2>
+      <h2 className="font-bold">
+        {!editMode &&
+          (templateMode ? 'New shopping template' : 'New shopping list')}
+      </h2>
 
       <div className="flex">
         <input
@@ -149,6 +195,10 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         </h3>
       </div>
 
+      {!templateMode && (
+        <TemplatePicker templates={templates} onSelect={templateSelect} />
+      )}
+
       <input
         className="p-2 rounded-lg text-lg border-primary border-2"
         type="text"
@@ -158,6 +208,7 @@ export function ShoppingList({ collectionId, groceryList }: ShoppingListProps) {
         onBlur={(e) => handleItem(e, undefined)}
         onKeyDown={(e) => handleKeyDown(e, undefined)}
       />
+
       <h4>{items.length} Items</h4>
       <ul className="flex flex-col gap-2">
         {items

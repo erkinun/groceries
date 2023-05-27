@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { CollectionList } from '../components/CollectionList';
 import { ShoppingList } from '../components/ShoppingList';
 
 import { auth } from '../firebase';
@@ -8,12 +7,12 @@ import { useCollections } from '../queries/collections';
 import { useShoppingLists } from '../queries/shopping-list';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useTemplates } from '../queries/templates';
 
 dayjs.extend(customParseFormat);
 
 // TODO grey out the older lists, older than today
 // TODO handle the collections, at least style them, does selecting a collection work?
-// TODO make sure that changing a list updates itself on others screens
 // TODO eslint
 // TODO add a simple view to the login page, explaining with a screenshot how to use the app
 export function Dashboard() {
@@ -28,6 +27,7 @@ export function Dashboard() {
     }
   }, [collections]);
   const lists = useShoppingLists(user?.uid ?? '', collections[0]?.id ?? '');
+  const templates = useTemplates(user?.uid ?? '', collections[0]?.id ?? '');
 
   const orderedByDateLists = lists
     .sort((a, b) => {
@@ -47,7 +47,7 @@ export function Dashboard() {
   return (
     <div className="w-full bg-cream text-neutral-600 p-2">
       <>
-        <ShoppingList collectionId={selectedCollection} />
+        <ShoppingList collectionId={selectedCollection} templates={templates} />
 
         <div className="mt-4 flex flex-col gap-4">
           {orderedByDateLists.map((list) => {
@@ -56,6 +56,7 @@ export function Dashboard() {
                 key={list.id}
                 collectionId={selectedCollection}
                 groceryList={list}
+                templates={templates}
               />
             );
           })}

@@ -12,6 +12,8 @@ export type GroceryList = {
   items: GroceryItem[];
 };
 
+export type TemplateList = GroceryList;
+
 // TODO maybe rename them to collections
 export type GroceryLists = {
   id: string;
