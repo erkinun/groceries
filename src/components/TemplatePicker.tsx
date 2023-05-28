@@ -12,7 +12,7 @@ export function TemplatePicker({ templates, onSelect }: TemplatePickerProps) {
 
   return (
     <select
-      className="w-full p-2 rounded-md border border-gray-300"
+      className="w-full p-2 rounded-lg text-lg border border-rosey"
       onChange={(e) => onSelect(e.target.value)}
     >
       <option value="">Select a template</option>
