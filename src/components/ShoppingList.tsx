@@ -29,7 +29,7 @@ type ShoppingListProps = {
   ) => void;
   deleteFn?: (collectionId: string, listId: string) => void;
   templateMode?: boolean;
-  templates: TemplateList[];
+  templates?: TemplateList[];
 };
 
 function attachIds(items: GroceryItem[]) {
