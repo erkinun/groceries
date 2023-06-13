@@ -52,6 +52,7 @@ function saveShoppingList(
   if (groceryList !== undefined && editMode) {
     updateShoppingList({
       ...groceryList,
+      name: listName ?? groceryList.name,
       items,
     });
   } else {
@@ -149,6 +150,11 @@ export function ShoppingList({
     );
   };
 
+  // TODO add a save list button when not in editing mode
+  const handleNameChange = () => {
+    handleSave(items);
+  };
+
   const handleReorder = (draggId: string, hoverId: string) => {
     const dragItem = items.find((item) => item.id === draggId);
     const hoverItem = items.find((item) => item.id === hoverId);
@@ -164,7 +170,6 @@ export function ShoppingList({
   };
 
   const templateSelect = (templateId: string) => {
-    console.log(`selected ${templateId}`);
     const template = templates.find((t) => t.id === templateId);
     if (template) {
       const newItems = items.concat(template.items);
@@ -188,6 +193,7 @@ export function ShoppingList({
           id="name"
           placeholder="Fill in a name to remember"
           defaultValue={groceryList?.name}
+          onBlur={handleNameChange}
         />
 
         <h3 className="text-neutral-400">
