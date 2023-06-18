@@ -20,6 +20,11 @@ export function Header() {
         <NavLink to="/collections" text="Collections" icon="fa-solid fa-tags" />
         <NavLink to="/profile" text="Profile" icon="fa-user" />
         <NavLink to="/share" text="Share" icon="fa-solid fa-share" />
+        <NavLink
+          to="/logout"
+          text="Log out"
+          icon="fa-solid fa-arrow-right-from-bracket"
+        />
       </ul>
     </nav>
   );

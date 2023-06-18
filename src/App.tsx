@@ -11,6 +11,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect } from 'react';
 import { Collections } from './pages/Collections';
 import { Templates } from './pages/Templates';
+import { Logout } from './pages/Logout';
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: '/share',
     element: <Share />,
+  },
+  {
+    path: '/logout',
+    element: <Logout />,
   },
 ]);
 
