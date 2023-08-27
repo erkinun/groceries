@@ -16,6 +16,7 @@ import Modal from './Modal';
 import { useDrag, useDrop } from 'react-dnd';
 import { printHumanReadableDate } from '../utils/date';
 import { TemplatePicker } from './TemplatePicker';
+import { useToggle } from '../utils/useToggle';
 
 type ShoppingListProps = {
   collectionId: string;
@@ -64,6 +65,8 @@ function saveShoppingList(
   }
 }
 
+// TODO have a version of this with a modal for the first entry of a list
+// TODO put it in a separate component and use it in dashboard
 export function ShoppingList({
   collectionId,
   groceryList,
@@ -150,9 +153,8 @@ export function ShoppingList({
     );
   };
 
-  // TODO add a save list button when not in editing mode
   const handleNameChange = () => {
-    handleSave(items);
+    editMode && handleSave(items);
   };
 
   const handleReorder = (draggId: string, hoverId: string) => {
@@ -178,6 +180,8 @@ export function ShoppingList({
     }
   };
 
+  const [isHidden, toggle] = useToggle(false);
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col gap-2">
       <h2 className="font-bold">
@@ -187,18 +191,16 @@ export function ShoppingList({
 
       <div className="flex">
         <input
-          className="font-bold"
+          className="font-bold border-b-2 border-primary"
           ref={inputRef}
           type="text"
           id="name"
-          placeholder="Fill in a name to remember"
+          placeholder="Enter a list name"
           defaultValue={groceryList?.name}
           onBlur={handleNameChange}
         />
 
-        <h3 className="text-neutral-400">
-          {editMode ? groceryList.date : printHumanReadableDate(new Date())}
-        </h3>
+        <h3 className="text-neutral-400">{editMode && groceryList.date}</h3>
       </div>
 
       {!templateMode && (
@@ -206,7 +208,7 @@ export function ShoppingList({
       )}
 
       <input
-        className="p-2 rounded-lg text-lg border-primary border-2"
+        className="p-2 rounded-lg text-lg border-primary border"
         type="text"
         placeholder="new item"
         value={newInputValue}
@@ -215,12 +217,20 @@ export function ShoppingList({
         onKeyDown={(e) => handleKeyDown(e, undefined)}
       />
 
-      <h4>{items.length} Items</h4>
+      <div className="flex gap-2">
+        <h4>{items.length} Items</h4>
+        <div className="items-center flex gap-2">
+          <label htmlFor="hideFetch">Hide fetched</label>
+          <input name="hideFetch" onChange={() => toggle()} type="checkbox" />
+        </div>
+      </div>
+
       <ul className="flex flex-col gap-2">
         {items
           .sort((a, b) => {
             return a.fetched === b.fetched ? 0 : a.fetched ? 1 : -1;
           })
+          .filter((item) => !isHidden || !item.fetched)
           .map((item) => (
             <DropItem
               key={item.id}
@@ -244,9 +254,6 @@ export function ShoppingList({
         )}
         {editMode &&
           deleteModal(deleteModalOpen, setDeleteModalOpen, deleteList)}
-        {
-          // TODO conver this button to a icon on the top right etc
-        }
       </div>
     </div>
   );

@@ -19,7 +19,10 @@ export function Login() {
   }, [user, loading]);
 
   return (
-    <div className="flex flex-col items-center justify-center bg-white p-4 rounded-xl shadow-lg gap-2 p-2 m-2">
+    <div className="flex flex-col items-center justify-center bg-white rounded-xl shadow-lg gap-2 p-2 m-2">
+      <button className="btn" onClick={authFn}>
+        Login with Google
+      </button>
       <h1 className="header">Groceries</h1>
       <h2 className="subheader">
         This is a simple grocery list app, where you can create and share (as a
@@ -29,9 +32,6 @@ export function Login() {
       <h3 className=""></h3>
       <h3>A simple preview: </h3>
       <img className="w-3/4 h-4/5" alt="screenshot" src={groceriesPng} />
-      <button className="btn" onClick={authFn}>
-        Login with Google
-      </button>
     </div>
   );
 }

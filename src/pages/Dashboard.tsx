@@ -14,7 +14,6 @@ dayjs.extend(customParseFormat);
 // TODO grey out the older lists, older than today
 // TODO handle the collections, at least style them, does selecting a collection work?
 // TODO eslint
-// TODO add a simple view to the login page, explaining with a screenshot how to use the app
 export function Dashboard() {
   const [user] = useAuthState(auth);
   const collections = useCollections();
