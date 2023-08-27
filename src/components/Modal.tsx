@@ -4,9 +4,15 @@ type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  fullWidth?: boolean;
 };
 
-const Modal = ({ isOpen, onClose, children }: ModalProps) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  children,
+  fullWidth = false,
+}: ModalProps) => {
   const [showModal, setShowModal] = useState<boolean>(isOpen);
 
   const closeModal = () => {
@@ -17,6 +23,10 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   useEffect(() => {
     setShowModal(isOpen);
   }, [isOpen]);
+
+  const containerStyle = `bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full ${
+    fullWidth ? 'w-full' : 'w-3/4`'
+  }`;
 
   return (
     <>
@@ -32,7 +42,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
             </div>
 
             <div
-              className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
+              className={containerStyle}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"

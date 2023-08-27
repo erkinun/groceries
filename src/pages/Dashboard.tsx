@@ -8,9 +8,12 @@ import { useShoppingLists } from '../queries/shopping-list';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useTemplates } from '../queries/templates';
+import Modal from '../components/Modal';
 
 dayjs.extend(customParseFormat);
 
+// TODO maybe have general settings like, hide completed items
+// TODO add react query and error handling in case there's no internet
 // TODO grey out the older lists, older than today
 // TODO handle the collections, at least style them, does selecting a collection work?
 // TODO eslint
@@ -43,10 +46,28 @@ export function Dashboard() {
     })
     .slice(0, 20); // last 20 lists, TODO add pagination
 
+  const [isNewListOpen, setIsNewListOpen] = useState<boolean>(false);
+  const buttonStyle = 'bg-primary text-white p-2 rounded';
   return (
     <div className="w-full bg-cream text-neutral-600 p-2">
       <>
-        <ShoppingList collectionId={selectedCollection} templates={templates} />
+        <button onClick={() => setIsNewListOpen(true)} className={buttonStyle}>
+          New shopping
+        </button>
+
+        <Modal
+          fullWidth={true}
+          isOpen={isNewListOpen}
+          onClose={() => setIsNewListOpen(false)}
+        >
+          <div className="min-w-full">
+            <ShoppingList
+              collectionId={selectedCollection}
+              templates={templates}
+              afterSaveFn={() => setIsNewListOpen(false)}
+            />
+          </div>
+        </Modal>
 
         <div className="mt-4 flex flex-col gap-4">
           {orderedByDateLists.map((list) => {

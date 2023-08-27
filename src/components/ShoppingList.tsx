@@ -28,6 +28,7 @@ type ShoppingListProps = {
     groceryList?: GroceryList,
     listName?: string,
   ) => void;
+  afterSaveFn?: () => void;
   deleteFn?: (collectionId: string, listId: string) => void;
   templateMode?: boolean;
   templates?: TemplateList[];
@@ -72,6 +73,7 @@ export function ShoppingList({
   groceryList,
   saveFn = saveShoppingList,
   deleteFn = deleteShoppingList,
+  afterSaveFn = () => {},
   templateMode = false,
   templates = [],
 }: ShoppingListProps) {
@@ -94,6 +96,7 @@ export function ShoppingList({
 
   const innerSave = (items: GroceryItem[]) => {
     saveFn(items, editMode, collectionId, groceryList, inputRef.current?.value);
+    afterSaveFn();
   };
 
   const deleteList = () => {
@@ -113,11 +116,22 @@ export function ShoppingList({
       if (id) {
         if (items.find((item) => item.id === id)) {
           newItem = { name: value, fetched: false, id };
-          handleSave(items.map((item) => (item.id === id ? newItem : item)));
+          const newItems = items.map((item) =>
+            item.id === id ? newItem : item,
+          );
+          if (editMode) {
+            handleSave(newItems);
+          } else {
+            setItems(newItems);
+          }
         }
       } else {
         newItem = { name: value, fetched: false, id: uuid() };
-        handleSave([...items, newItem]);
+        if (editMode) {
+          handleSave([...items, newItem]);
+        } else {
+          setItems([...items, newItem]);
+        }
       }
 
       setNewInputValue('');
@@ -176,7 +190,7 @@ export function ShoppingList({
     if (template) {
       const newItems = items.concat(template.items);
       setItems(newItems);
-      handleSave(newItems);
+      editMode && handleSave(newItems);
     }
   };
 
@@ -219,10 +233,12 @@ export function ShoppingList({
 
       <div className="flex gap-2">
         <h4>{items.length} Items</h4>
-        <div className="items-center flex gap-2">
-          <label htmlFor="hideFetch">Hide fetched</label>
-          <input name="hideFetch" onChange={() => toggle()} type="checkbox" />
-        </div>
+        {editMode && (
+          <div className="items-center flex gap-2">
+            <label htmlFor="hideFetch">Hide fetched</label>
+            <input name="hideFetch" onChange={() => toggle()} type="checkbox" />
+          </div>
+        )}
       </div>
 
       <ul className="flex flex-col gap-2">
@@ -254,6 +270,15 @@ export function ShoppingList({
         )}
         {editMode &&
           deleteModal(deleteModalOpen, setDeleteModalOpen, deleteList)}
+
+        {!editMode && (
+          <button
+            className={`bg-primary text-white p-2 rounded m-2`}
+            onClick={() => handleSave(items)}
+          >
+            Save & Close
+          </button>
+        )}
       </div>
     </div>
   );
@@ -281,7 +306,6 @@ function DropItem(
   const [, drop] = useDrop(() => ({
     accept: 'shopping-item',
     drop: (item: any) => {
-      console.log({ item, original: props.item });
       props.handleReorder(item.id, props.item.id ?? '');
     },
   }));
