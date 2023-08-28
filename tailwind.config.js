@@ -7,13 +7,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#FFD898',
-        primaryBold: '#A36A00',
-        secondary: '#5865f2',
-        cream: '#F9F6F0',
-        rosey: '#FEE7E6',
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+        negative: 'var(--color-negative)',
+        positive: 'var(--color-positive)',
+        cream: 'var(--color-cream)',
+        rosey: 'var(--color-rosey)',
+        'primary-background': 'var(--background-primary)',
+        primaryBold: 'var(--color-primary-bold)',
+        'sec-background': 'var(--background-sec)',
+        contrast: 'var(--color-contrast)',
+        'primary-text': 'var(--color-text-primary)',
       },
+      backgroundColor: (theme) => ({
+        ...theme('colors'),
+      }),
     },
+  },
+  variants: {
+    backgroundColor: ['active'],
   },
   plugins: [],
 };

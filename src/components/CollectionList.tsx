@@ -8,7 +8,7 @@ export type CollectionListProps = {
 export function CollectionList({ collections, onChange }: CollectionListProps) {
   return (
     <select
-      className="bg-primary text-white"
+      className="text-primary bg-primary-background"
       onChange={(e) => {
         const selectedCollection = collections.find(
           (collection) => collection.id === e.target.value,

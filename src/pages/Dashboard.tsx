@@ -12,6 +12,7 @@ import Modal from '../components/Modal';
 
 dayjs.extend(customParseFormat);
 
+// TODO dynamic theme switching
 // TODO maybe have general settings like, hide completed items
 // TODO add react query and error handling in case there's no internet
 // TODO grey out the older lists, older than today
@@ -47,9 +48,9 @@ export function Dashboard() {
     .slice(0, 20); // last 20 lists, TODO add pagination
 
   const [isNewListOpen, setIsNewListOpen] = useState<boolean>(false);
-  const buttonStyle = 'bg-primary text-white p-2 rounded';
+  const buttonStyle = 'bg-sec-background text-primary-text p-2 rounded';
   return (
-    <div className="w-full bg-cream text-neutral-600 p-2">
+    <div className="w-full text-neutral-600 p-2">
       <>
         <button onClick={() => setIsNewListOpen(true)} className={buttonStyle}>
           New shopping

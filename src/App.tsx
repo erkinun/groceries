@@ -8,10 +8,12 @@ import { Profile } from './pages/Profile';
 import { Share } from './pages/Share';
 import { auth } from './firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Collections } from './pages/Collections';
 import { Templates } from './pages/Templates';
 import { Logout } from './pages/Logout';
+import { DEFAULT_THEME } from './themes';
+import { applyTheme } from './themes/utils';
 
 const router = createBrowserRouter([
   {
@@ -57,10 +59,24 @@ export function App() {
 
   error && console.error(error);
 
+  const [theme, setTheme] = useState(DEFAULT_THEME);
+
+  /**
+   * Run the applyTheme function every time the theme state changes
+   */
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+
   return (
     <div className="flex">
-      <Header />
-      <div className="w-screen bg-cream">
+      <Header
+        onThemeChange={() =>
+          theme === 'dark' ? setTheme('base') : setTheme('dark')
+        }
+        theme={theme}
+      />
+      <div className="w-screen bg-primary-background">
         <StatusBar />
         {loading && <div>Loading</div>}
         {!loading && <RouterProvider router={router} />}

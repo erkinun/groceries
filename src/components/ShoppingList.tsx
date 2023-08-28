@@ -197,7 +197,7 @@ export function ShoppingList({
   const [isHidden, toggle] = useToggle(false);
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col gap-2">
+    <div className="bg-contrast p-4 rounded-xl shadow-lg flex flex-col gap-2">
       <h2 className="font-bold">
         {!editMode &&
           (templateMode ? 'New shopping template' : 'New shopping list')}
