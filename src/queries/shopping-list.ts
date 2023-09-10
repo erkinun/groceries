@@ -18,17 +18,15 @@ export function useShoppingLists(uid: string, collectionId: string) {
 
   useEffect(() => {
     if (uid && collectionId) {
-      const shoppingListsRef = ref(
-        database,
-        `collections/${collectionId}/lists`,
+      const shoppingListsRef = query(
+        ref(database, `collections/${collectionId}/lists`),
+        limitToLast(20),
       );
       onValue(shoppingListsRef, (snapshot) => {
         snapshot.forEach((child) => {
-          const realRef = query(
-            ref(database, `lists/${child.val()}`),
-            limitToLast(20),
-          );
+          const realRef = query(ref(database, `lists/${child.val()}`));
           onValue(realRef, (listSnap) => {
+            console.log('are we here?');
             const listData = listSnap.val() as GroceryList;
             setShoppingLists((existingLists) => {
               if (listData === null) {
