@@ -8,6 +8,8 @@ import {
   push,
   update,
   remove,
+  limitToLast,
+  query,
 } from 'firebase/database';
 import { database } from '../firebase';
 
@@ -22,7 +24,10 @@ export function useShoppingLists(uid: string, collectionId: string) {
       );
       onValue(shoppingListsRef, (snapshot) => {
         snapshot.forEach((child) => {
-          const realRef = ref(database, `lists/${child.val()}`);
+          const realRef = query(
+            ref(database, `lists/${child.val()}`),
+            limitToLast(20),
+          );
           onValue(realRef, (listSnap) => {
             const listData = listSnap.val() as GroceryList;
             setShoppingLists((existingLists) => {
