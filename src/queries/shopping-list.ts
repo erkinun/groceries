@@ -26,7 +26,6 @@ export function useShoppingLists(uid: string, collectionId: string) {
         snapshot.forEach((child) => {
           const realRef = query(ref(database, `lists/${child.val()}`));
           onValue(realRef, (listSnap) => {
-            console.log('are we here?');
             const listData = listSnap.val() as GroceryList;
             setShoppingLists((existingLists) => {
               if (listData === null) {

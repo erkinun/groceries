@@ -20,7 +20,6 @@ export function Share() {
   const [collectionId, setCollectionId] = useState<string>(collections[0]?.id);
   const inputRef = useRef<HTMLInputElement>(null);
   const handleShare = async () => {
-    console.log('sharing', collectionId, inputRef.current?.value);
     if (inputRef.current?.value && collectionId !== '') {
       // TODO maybe add some result state to confirm the share was successful
       shareCollectionWithUser(collectionId, inputRef.current?.value);
