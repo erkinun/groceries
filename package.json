@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@sentry/react": "^7.76.0",
+    "@sentry/vite-plugin": "^2.9.0",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.7",
     "firebase": "^9.17.1",
