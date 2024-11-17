@@ -3,7 +3,7 @@
 import classNames from 'classnames';
 import { NavLink as Link } from 'react-router-dom';
 
-export function Header({
+export function Navigation({
   onThemeChange,
   theme,
 }: {

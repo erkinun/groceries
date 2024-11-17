@@ -1,6 +1,6 @@
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import StatusBar from './components/StatusBar';
-import { Header } from './pages/Header';
+import { Navigation } from './pages/Navigation';
 import ErrorPage from './pages/ErrorPage';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -85,7 +85,7 @@ function Root() {
 
   return (
     <div className="flex">
-      <Header
+      <Navigation
         onThemeChange={() =>
           theme === 'dark' ? setTheme('base') : setTheme('dark')
         }
