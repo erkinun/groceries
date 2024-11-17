@@ -4,7 +4,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { updateUserName, useProfile } from '../queries/user';
 
-// TODO style this page
+// TODO add the option of fetching last n groceries
 export function Profile() {
   const [user] = useAuthState(auth);
   const profile = useProfile();

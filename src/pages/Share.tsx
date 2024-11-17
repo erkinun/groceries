@@ -12,6 +12,7 @@ import { GroceryLists } from '../types/groceries-list';
 
 // TODO this component renders 7 times to get the full details
 // TODO in near future, receipient of the share should be able approve or deny
+// TODO have a type ahead of the users, maybe show existing users that already shared
 export function Share() {
   // TODO can we just include the auth state in the hooks below?
   const [user] = useAuthState(auth);
