@@ -14,7 +14,7 @@ export default function StatusBar() {
   const profile = useProfile();
 
   return (
-    <div className="flex bg-sec-background text-white justify-between p-2">
+    <div className="flex items-center bg-sec-background text-white justify-between p-2">
       <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>
       {
         // TODO add the onChange event
