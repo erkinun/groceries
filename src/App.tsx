@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import StatusBar from './components/StatusBar';
 import { Header } from './pages/Header';
 import ErrorPage from './pages/ErrorPage';
@@ -15,39 +15,54 @@ import { Logout } from './pages/Logout';
 import { DEFAULT_THEME } from './themes';
 import { applyTheme } from './themes/utils';
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Root />,
+      children: [
+        {
+          path: '/',
+          errorElement: <ErrorPage />,
+          element: <Login />,
+        },
+        {
+          path: '/dashboard',
+          element: <Dashboard />,
+        },
+        {
+          path: '/templates',
+          element: <Templates />,
+        },
+        {
+          path: '/collections',
+          element: <Collections />,
+        },
+        {
+          path: '/profile',
+          element: <Profile />,
+        },
+        {
+          path: '/share',
+          element: <Share />,
+        },
+        {
+          path: '/logout',
+          element: <Logout />,
+        },
+      ],
+    },
+  ],
   {
-    path: '/',
-    errorElement: <ErrorPage />,
-    element: <Login />,
+    future: {
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_partialHydration: true,
+    },
   },
-  {
-    path: '/dashboard',
-    element: <Dashboard />,
-  },
-  {
-    path: '/templates',
-    element: <Templates />,
-  },
-  {
-    path: '/collections',
-    element: <Collections />,
-  },
-  {
-    path: '/profile',
-    element: <Profile />,
-  },
-  {
-    path: '/share',
-    element: <Share />,
-  },
-  {
-    path: '/logout',
-    element: <Logout />,
-  },
-]);
+);
 
-export function App() {
+function Root() {
   const [user, loading, error] = useAuthState(auth);
   useEffect(() => {
     if (loading) {
@@ -79,8 +94,12 @@ export function App() {
       <div className="w-screen bg-primary-background">
         <StatusBar />
         {loading && <div>Loading</div>}
-        {!loading && <RouterProvider router={router} />}
+        {!loading && <Outlet />}
       </div>
     </div>
   );
+}
+
+export function App() {
+  return <RouterProvider router={router} />;
 }

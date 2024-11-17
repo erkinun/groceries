@@ -1,6 +1,7 @@
 // TODO we need to somehow feed this into react router dom at some point
 
 import classNames from 'classnames';
+import { NavLink as Link } from 'react-router-dom';
 
 export function Header({
   onThemeChange,
@@ -10,6 +11,7 @@ export function Header({
   theme: string;
 }) {
   const switcher = `${theme === 'base' ? 'fa-moon' : 'fa-sun'} fa-regular`;
+
   return (
     <nav className="sticky top-0 left-0 w-12 h-screen md:min-w-min m-0 flex flex-col bg-sec-background text-white shadow-lg">
       <ul>
@@ -55,11 +57,18 @@ const NavLink = ({
   onClick?: () => void;
 }) => {
   return (
-    <li className="nav-link" onClick={onClick}>
-      <a href={to} className="flex items-center gap-2">
-        <i className={classNames('fa-regular', icon)}></i>
-        <span className="hidden md:block">{text}</span>
-      </a>
-    </li>
+    <Link to={to ?? ''}>
+      {({ isActive }) => (
+        <li
+          className={`nav-link ${
+            isActive ? 'text-white bg-primaryBold rounded-xl' : ''
+          } flex items-center gap-2`}
+          onClick={onClick}
+        >
+          <i className={classNames('fa-regular', icon)}></i>
+          <span className="hidden md:block">{text}</span>
+        </li>
+      )}
+    </Link>
   );
 };
