@@ -31,7 +31,7 @@ export function Collections() {
             return <Collection key={collection.id} collection={collection} />;
           })}
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
           <h2>Create a new shopping collection</h2>
           <input className="p-2 border rounded" ref={inputRef} type="text" />
           <button

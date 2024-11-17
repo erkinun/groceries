@@ -24,7 +24,7 @@ export function Profile() {
           <div className="w-28 text-right text-gray-500">User name:</div>
           <span>{profile.userName}</span>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
           <h2 className="text-gray-500">Change your user name</h2>
           <input
             className="p-2 border rounded"
