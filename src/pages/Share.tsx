@@ -34,24 +34,29 @@ export function Share() {
   }, [collections]);
 
   return (
-    <div>
-      <div>Hi {profile.userName ?? user?.displayName}!</div>
-      <div>
+    <div className="w-full text-neutral-600 p-2">
+      <div className="bg-contrast p-4 rounded-xl shadow-lg flex flex-col gap-4">
         <h2>Share your collection</h2>
         <CollectionList
           collections={collections}
           onChange={(collection) => setCollectionId(collection.id)}
         />
-        <div>
-          <label htmlFor="share">Share with</label>
+        <div className="flex gap-2 items-center">
+          <label htmlFor="share">with</label>
           <input
+            className="p-2 border rounded"
             ref={inputRef}
             type="text"
             placeholder="Enter username of user"
           />
         </div>
 
-        <button onClick={handleShare}>Share</button>
+        <button
+          className="p-2 rounded bg-sec-background text-primary-text"
+          onClick={handleShare}
+        >
+          Share
+        </button>
       </div>
     </div>
   );
