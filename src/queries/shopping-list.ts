@@ -13,14 +13,18 @@ import {
 } from 'firebase/database';
 import { database } from '../firebase';
 
-export function useShoppingLists(uid: string, collectionId: string) {
+export function useShoppingLists(
+  uid: string,
+  collectionId: string,
+  numberOfGroceries: number,
+) {
   const [shoppingLists, setShoppingLists] = useState([] as GroceryList[]);
 
   useEffect(() => {
     if (uid && collectionId) {
       const shoppingListsRef = query(
         ref(database, `collections/${collectionId}/lists`),
-        limitToLast(20),
+        limitToLast(numberOfGroceries),
       );
       onValue(shoppingListsRef, (snapshot) => {
         snapshot.forEach((child) => {

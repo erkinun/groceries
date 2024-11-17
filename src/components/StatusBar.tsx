@@ -11,7 +11,7 @@ export default function StatusBar() {
   const isOnline = useOnlineStatus();
   const collections = useCollections();
   const [user] = useAuthState(auth);
-  const profile = useProfile();
+  const [profile] = useProfile();
 
   return (
     <div className="flex items-center bg-sec-background text-white justify-between p-2">

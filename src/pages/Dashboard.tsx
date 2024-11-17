@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useTemplates } from '../queries/templates';
 import Modal from '../components/Modal';
+import { useProfile } from '../queries/user';
 
 dayjs.extend(customParseFormat);
 
@@ -29,7 +30,12 @@ export function Dashboard() {
       setSelectedCollection(collections[0].id);
     }
   }, [collections]);
-  const lists = useShoppingLists(user?.uid ?? '', collections[0]?.id ?? '');
+  const [profile] = useProfile();
+  const lists = useShoppingLists(
+    user?.uid ?? '',
+    collections[0]?.id ?? '',
+    profile.numberOfGroceries,
+  );
   const templates = useTemplates(user?.uid ?? '', collections[0]?.id ?? '');
 
   const orderedByDateLists = lists

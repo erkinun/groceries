@@ -1,16 +1,22 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { auth } from '../firebase';
-import { updateUserName, useProfile } from '../queries/user';
+import {
+  Profile,
+  updateProfile,
+  updateUserName,
+  useProfile,
+} from '../queries/user';
 
 // TODO add the option of fetching last n groceries
-export function Profile() {
+// TODO next time you add a new item, add tanstack form or hook form
+export function ProfilePage() {
   const [user] = useAuthState(auth);
-  const profile = useProfile();
+  const [current, setProfile] = useProfile();
   const inputRef = useRef<HTMLInputElement>(null);
   const handleSave = () => {
-    updateUserName(user?.uid ?? '', inputRef.current?.value ?? '');
+    user?.uid && updateProfile(user?.uid ?? '', current);
   };
 
   return (
@@ -22,7 +28,7 @@ export function Profile() {
         </div>
         <div className="flex gap-2">
           <div className="w-28 text-right text-gray-500">User name:</div>
-          <span>{profile.userName}</span>
+          <span>{current.userName}</span>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
           <h2 className="text-gray-500">Change your user name</h2>
@@ -30,7 +36,26 @@ export function Profile() {
             className="p-2 border rounded"
             ref={inputRef}
             type="text"
-            defaultValue={profile.userName}
+            value={current.userName}
+            onChange={(e) =>
+              setProfile((cur) => ({ ...cur, userName: e.target.value }))
+            }
+          />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+          <h2 className="text-gray-500"># of grocery lists on Dashboard</h2>
+          <input
+            className="p-2 border rounded"
+            min={1}
+            max={20}
+            type="number"
+            value={current.numberOfGroceries}
+            onChange={(e) =>
+              setProfile((cur) => ({
+                ...cur,
+                numberOfGroceries: Number(e.target.value),
+              }))
+            }
           />
           <button
             className="p-2 rounded bg-sec-background text-primary-text"

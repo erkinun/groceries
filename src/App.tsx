@@ -4,7 +4,7 @@ import { Navigation } from './pages/Navigation';
 import ErrorPage from './pages/ErrorPage';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
-import { Profile } from './pages/Profile';
+import { ProfilePage } from './pages/Profile';
 import { Share } from './pages/Share';
 import { auth } from './firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -40,7 +40,7 @@ const router = createBrowserRouter(
         },
         {
           path: '/profile',
-          element: <Profile />,
+          element: <ProfilePage />,
         },
         {
           path: '/share',

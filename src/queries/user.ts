@@ -17,15 +17,42 @@ export async function updateUserName(uid: string, userName: string) {
   }
 }
 
+export async function updateProfile(uid: string, profile: Partial<Profile>) {
+  try {
+    const profileRef = ref(database, `users/${uid}/profile`);
+    await update(profileRef, profile);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function updateNumberOfGroceriesOption(
+  uid: string,
+  numberOfGroceries: number,
+) {
+  try {
+    const profileRef = ref(database, `users/${uid}/profile`);
+    await update(profileRef, {
+      numberOfGroceries,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 // TODO move this to where?
-type Profile = {
+export type Profile = {
   userName: string;
+  numberOfGroceries: number;
 };
 
 export function useProfile() {
   const [user] = useAuthState(auth);
   const uid = user?.uid;
-  const [profile, setProfile] = useState({} as Profile);
+  const [profile, setProfile] = useState({
+    numberOfGroceries: 2,
+    userName: '',
+  } as Profile);
 
   useEffect(() => {
     if (uid) {
@@ -33,11 +60,14 @@ export function useProfile() {
       onValue(profileRef, (snapshot) => {
         const data = snapshot.val();
         if (snapshot.exists()) {
-          setProfile(data);
+          setProfile({
+            numberOfGroceries: 2,
+            ...data,
+          });
         }
       });
     }
   }, [uid]);
 
-  return profile;
+  return [profile, setProfile] as const;
 }

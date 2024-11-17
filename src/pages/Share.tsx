@@ -2,21 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { CollectionList } from '../components/CollectionList';
 
-import { auth } from '../firebase';
 import {
   shareCollectionWithUser,
   useCollections,
 } from '../queries/collections';
-import { updateUserName, useProfile } from '../queries/user';
-import { GroceryLists } from '../types/groceries-list';
 
 // TODO this component renders 7 times to get the full details
 // TODO in near future, receipient of the share should be able approve or deny
 // TODO have a type ahead of the users, maybe show existing users that already shared
 export function Share() {
   // TODO can we just include the auth state in the hooks below?
-  const [user] = useAuthState(auth);
-  const profile = useProfile();
   const collections = useCollections();
   const [collectionId, setCollectionId] = useState<string>(collections[0]?.id);
   const inputRef = useRef<HTMLInputElement>(null);
