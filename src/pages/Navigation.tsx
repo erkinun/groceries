@@ -27,7 +27,7 @@ export function Navigation({
           icon="fa-regular fa-floppy-disk"
         />
         <NavLink to="/collections" text="Collections" icon="fa-solid fa-tags" />
-        <NavLink to="/profile" text="Profile" icon="fa-user" />
+        <NavLink to="/profile" text="Profile" icon="fa-regular fa-user" />
         <NavLink to="/share" text="Share" icon="fa-solid fa-share" />
         <NavLink
           key={theme}
@@ -65,7 +65,7 @@ const NavLink = ({
           } flex items-center gap-2`}
           onClick={onClick}
         >
-          <i className={classNames('fa-regular', icon)}></i>
+          <i className={icon}></i>
           <span className="hidden md:block">{text}</span>
         </li>
       )}

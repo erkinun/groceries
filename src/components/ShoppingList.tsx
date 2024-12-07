@@ -17,6 +17,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { printHumanReadableDate } from '../utils/date';
 import { TemplatePicker } from './TemplatePicker';
 import { useToggle } from '../utils/useToggle';
+import { SecondaryButton } from './Button';
 
 type ShoppingListProps = {
   collectionId: string;
@@ -194,6 +195,16 @@ export function ShoppingList({
     }
   };
 
+  const moveToNewList = () => {
+    saveShoppingList(
+      items.filter((i) => !i.fetched),
+      false,
+      collectionId,
+      undefined,
+      `unfetched ${groceryList?.name}`,
+    );
+  };
+
   const [isHidden, toggle] = useToggle(false);
 
   return (
@@ -231,12 +242,15 @@ export function ShoppingList({
         onKeyDown={(e) => handleKeyDown(e, undefined)}
       />
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <h4>{items.length} Items</h4>
         {editMode && (
-          <div className="items-center flex gap-2">
+          <div className="items-center flex gap-2 flex-grow">
             <label htmlFor="hideFetch">Hide fetched</label>
             <input name="hideFetch" onChange={() => toggle()} type="checkbox" />
+            <div className="ml-auto">
+              <SecondaryButton onClick={moveToNewList} text="Move to new" />
+            </div>
           </div>
         )}
       </div>
