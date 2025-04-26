@@ -51,6 +51,7 @@ function saveShoppingList(
   collectionId: string,
   groceryList?: GroceryList,
   listName?: string,
+  date?: string,
 ) {
   if (groceryList !== undefined && editMode) {
     updateShoppingList({
@@ -195,13 +196,37 @@ export function ShoppingList({
     }
   };
 
+  function getNextDayName(): string {
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    const today = new Date();
+    const nextDayIndex = (today.getDay() + 1) % 7;
+    return days[nextDayIndex];
+  }
+
+  function getNextDayDate(): Date {
+    const today = new Date();
+    const nextDay = new Date(today);
+    nextDay.setDate(today.getDate() + 1);
+    return nextDay;
+  }
+
   const moveToNewList = () => {
+    const newName = `Market for ${getNextDayName()}`;
     saveShoppingList(
       items.filter((i) => !i.fetched),
       false,
       collectionId,
       undefined,
-      `unfetched ${groceryList?.name}`,
+      newName,
+      printHumanReadableDate(getNextDayDate()),
     );
   };
 
