@@ -40,8 +40,8 @@ export function Dashboard() {
 
   const orderedByDateLists = lists
     .sort((a, b) => {
-      const aDate = dayjs(a.date, 'DD/MM/YYYY');
-      const bDate = dayjs(b.date, 'DD/MM/YYYY');
+      const aDate = dayjs(a.date, ['DD/MM/YYYY HH:mm:ss', 'DD/MM/YYYY']);
+      const bDate = dayjs(b.date, ['DD/MM/YYYY HH:mm:ss', 'DD/MM/YYYY']);
 
       if (dayjs(bDate).isBefore(dayjs(aDate))) {
         return -1;

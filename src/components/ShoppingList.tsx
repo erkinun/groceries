@@ -14,7 +14,10 @@ import classNames from 'classnames';
 import { debounce } from '../utils/debounce';
 import Modal from './Modal';
 import { useDrag, useDrop } from 'react-dnd';
-import { printHumanReadableDate } from '../utils/date';
+import {
+  printHumanReadableDate,
+  printHumanReadableDateTime,
+} from '../utils/date';
 import { TemplatePicker } from './TemplatePicker';
 import { useToggle } from '../utils/useToggle';
 import { SecondaryButton } from './Button';
@@ -62,7 +65,7 @@ function saveShoppingList(
   } else {
     createShoppingList(collectionId, {
       name: listName || `Market for ${printHumanReadableDate(new Date())}`,
-      date: printHumanReadableDate(new Date()),
+      date: date ?? printHumanReadableDate(new Date()),
       items,
     });
   }
@@ -226,7 +229,7 @@ export function ShoppingList({
       collectionId,
       undefined,
       newName,
-      printHumanReadableDate(getNextDayDate()),
+      printHumanReadableDateTime(getNextDayDate()),
     );
   };
 
@@ -239,7 +242,7 @@ export function ShoppingList({
           (templateMode ? 'New shopping template' : 'New shopping list')}
       </h2>
 
-      <div className="flex">
+      <div className="flex justify-between items-center">
         <input
           className="font-bold border-b-2 border-primary"
           ref={inputRef}
@@ -250,7 +253,9 @@ export function ShoppingList({
           onBlur={handleNameChange}
         />
 
-        <h3 className="text-neutral-400">{editMode && groceryList.date}</h3>
+        <h3 className="text-neutral-400 text-sm text-right">
+          {editMode && groceryList.date}
+        </h3>
       </div>
 
       {!templateMode && (
